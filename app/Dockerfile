@@ -1,16 +1,14 @@
-# FROM python:3.8.1-slim-buster
 FROM python:3.6.8-alpine3.9
-
-# LABEL MAINTAINER="FirstName LastName <example@domain.com>"
 
 ENV GROUP_ID=1000 \
     USER_ID=1000
 
 WORKDIR /var/www/
 
-ADD . /var/www/
+COPY . /var/www/
+
 RUN python -m pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn
 
 RUN addgroup -g $GROUP_ID www

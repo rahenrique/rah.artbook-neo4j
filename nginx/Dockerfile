@@ -1,7 +1,5 @@
 FROM alpine:3.13.2
 
-# LABEL MAINTAINER="FirstName LastName <example@domain.com>"
-
 RUN apk --update add nginx && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
