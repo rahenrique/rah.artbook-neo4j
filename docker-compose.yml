@@ -19,7 +19,7 @@ services:
       # MONGODB_HOSTNAME: mongodb
     volumes:
       - ./app:/var/www
-    command: gunicorn -w 4 --bind=0.0.0.0:5000 wsgi
+    command: gunicorn -w 4 --bind=0.0.0.0:5000 "flaskr:create_app()"
     depends_on:
       - neo4j
     networks:
