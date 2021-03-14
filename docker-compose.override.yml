@@ -1,0 +1,25 @@
+version: '3'
+services:
+  flask:
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: "app.py"
+      FLASK_ENV: "development"
+      FLASK_DEBUG: 1
+      APP_PORT: 5000
+    volumes:
+      - ./app:/var/www
+    depends_on:
+      - neo4j
+    networks:
+      - frontend
+      - backend
+    command: flask run --host=0.0.0.0
+
+  # disabled services
+  webserver:
+    image: tianon/true 
+    restart: "no"
+    command: "true"
+    entrypoint: "true"
