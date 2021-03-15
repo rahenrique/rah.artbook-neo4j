@@ -47,7 +47,7 @@ def create_app(test_config=None):
     # app.add_url_rule("/", endpoint="index")
 
 
-    uri = "bolt://n4jdb:7687"
+    uri = "bolt://n4j-db:7687"
     driver = GraphDatabase.driver(uri, auth=("neo4j", "test"))
 
     def create_person(tx, name):
@@ -60,17 +60,11 @@ def create_app(test_config=None):
 
     # with driver.session() as session:
     #     session.write_transaction(create_person, "Alice")
-    
-    # with driver.session() as session:
     #     session.write_transaction(create_person, "Bob")
-
-    # with driver.session() as session:
     #     session.write_transaction(create_person, "Carl")
 
     # with driver.session() as session:
     #     session.write_transaction(create_friend_of, "Alice", "Bob")
-
-    # with driver.session() as session:
     #     session.write_transaction(create_friend_of, "Alice", "Carl")
 
     driver.close()

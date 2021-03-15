@@ -1,11 +1,11 @@
 version: '3'
 services:
-  n4jflask:
+  n4j-flask:
     build:
       context: app
       dockerfile: Dockerfile
-    container_name: n4jflask
-    image: n4jflask
+    container_name: n4j-flask
+    image: n4j-flask
     restart: unless-stopped
     environment:
       FLASK_ENV: "prod"
@@ -17,14 +17,14 @@ services:
       - ./app:/var/www
     command: gunicorn -w 4 --bind=0.0.0.0:5000 "flaskr:create_app()"
     depends_on:
-      - n4jdb
+      - n4j-db
     networks:
-      - n4jfrontend
-      - n4jbackend
+      - n4j-frontend
+      - n4j-backend
 
-  n4jdb:
+  n4j-db:
     image: neo4j:3.5
-    container_name: n4jdb
+    container_name: n4j-db
     restart: unless-stopped
     ports:
       - 7474:7474
@@ -47,14 +47,14 @@ services:
       - NEO4J_dbms.memory.heap.initial_size=1G
       - NEO4J_dbms_memory_heap_max__size=1G
     networks:
-      - n4jbackend
+      - n4j-backend
 
-  n4jwebserver:
+  n4j-webserver:
     build:
       context: nginx
       dockerfile: Dockerfile
-    image: n4jwebserver
-    container_name: n4jwebserver
+    image: n4j-webserver
+    container_name: n4j-webserver
     restart: unless-stopped
     environment:
       APP_ENV: "prod"
@@ -67,14 +67,14 @@ services:
     volumes:
       - nginxdata:/var/log/nginx
     depends_on:
-      - n4jflask
+      - n4j-flask
     networks:
-      - n4jfrontend
+      - n4j-frontend
 
 networks:
-  n4jfrontend:
+  n4j-frontend:
     driver: bridge
-  n4jbackend:
+  n4j-backend:
     driver: bridge
 
 volumes:

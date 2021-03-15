@@ -1,6 +1,6 @@
 version: '3'
 services:
-  n4jflask:
+  n4j-flask:
     ports:
       - "5000:5000"
     environment:
@@ -11,14 +11,14 @@ services:
     volumes:
       - ./app:/var/www
     depends_on:
-      - n4jdb
+      - n4j-db
     networks:
-      - n4jfrontend
-      - n4jbackend
+      - n4j-frontend
+      - n4j-backend
     command: flask run --host=0.0.0.0
 
   # disabled services
-  n4jwebserver:
+  n4j-webserver:
     image: tianon/true 
     restart: "no"
     command: "true"
