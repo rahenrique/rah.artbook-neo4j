@@ -36,7 +36,8 @@ Caso seja a primeira vez que a aplicação é iniciada, será necessário criar 
 $ docker exec -it flask flask init-db
 ```
 
-Acesse <http://0.0.0.0:5000/>
+App: <http://0.0.0.0:5000/>
+Neo4jBrowser: <http://localhost:7474/browser/>
 
 ## Executando testes
 
