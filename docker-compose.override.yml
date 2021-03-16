@@ -1,6 +1,6 @@
 version: '3'
 services:
-  n4j-flask:
+  artbook-app:
     ports:
       - "5000:5000"
     environment:
@@ -11,14 +11,14 @@ services:
     volumes:
       - ./app:/var/www
     depends_on:
-      - n4j-db
+      - artbook-db
     networks:
-      - n4j-frontend
-      - n4j-backend
+      - artbook-frontend
+      - artbook-backend
     command: flask run --host=0.0.0.0
 
   # disabled services
-  n4j-webserver:
+  artbook-webserver:
     image: tianon/true 
     restart: "no"
     command: "true"
