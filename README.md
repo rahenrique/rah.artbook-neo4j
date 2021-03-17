@@ -51,5 +51,6 @@ Acesso:
 ## Built With
 
 * [Flask](https://flask.palletsprojects.com/)
+* [Flask-RESTful](https://flask-restful.readthedocs.io/)
 * [Neo4j](https://neo4j.com/)
 * [nginx](https://nginx.org/en/)

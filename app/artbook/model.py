@@ -1,125 +1,50 @@
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
-from werkzeug.exceptions import abort
+from flask_restful import Api, Resource, abort
 
-from flaskr.auth import login_required
-from flaskr.db import get_db
+artists = [
+    {
+        'id': 1,
+        'name': u'Pablo Picasso',
+        'alternative_names': [
+            u'Ruiz Blasco Picasso y Lopez',
+            u'Pablo Ruiz y Picasso',
+            u'Pablo Ruiz Blasco',
+            u'Pablo Diego José Francisco de Paula Juan Nepomuceno Crispín Crispiniano de la Santissima Trinidad Ruiz Blasco Picasso',
+            u'Pablo Ruiz Picasso' 
+        ],
+        'birth_date': '1881-10-25',
+        'death_date': '1973-04-08' 
+    },
+    {
+        'id': 2,
+        'name': u'Claude Monet',
+        'alternative_names': [
+            u'Claude Oscar Monet',
+            u'Claude Jean Monet',
+            u'Claude-Oscar Monet',
+            u'Oscar Claude Monet',
+            u'Oscar-Claude Monet'
+        ],
+        'birth_date': '1840-11-14',
+        'death_date': '1926-12-05'
+    }
+]
 
-bp = Blueprint("blog", __name__)
+class Artist(Resource):
 
+    def get(self, artist_id):
+        artist = [artist for artist in artists if artist['id'] == artist_id]
+        if len(artist) == 0:
+            abort(404, message="The requested Artist #({}) doesn't exist".format(artist_id))
+        return artist
 
-@bp.route("/")
-def index():
-    """Show all the posts, most recent first."""
-    db = get_db()
-    posts = db.execute(
-        "SELECT p.id, title, body, created, author_id, username"
-        " FROM post p JOIN user u ON p.author_id = u.id"
-        " ORDER BY created DESC"
-    ).fetchall()
-    return render_template("blog/index.html", posts=posts)
-
-
-def get_post(id, check_author=True):
-    """Get a post and its author by id.
-
-    Checks that the id exists and optionally that the current user is
-    the author.
-
-    :param id: id of post to get
-    :param check_author: require the current user to be the author
-    :return: the post with author information
-    :raise 404: if a post with the given id doesn't exist
-    :raise 403: if the current user isn't the author
-    """
-    post = (
-        get_db()
-        .execute(
-            "SELECT p.id, title, body, created, author_id, username"
-            " FROM post p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
-            (id,),
-        )
-        .fetchone()
-    )
-
-    if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
-
-    if check_author and post["author_id"] != g.user["id"]:
-        abort(403)
-
-    return post
-
-
-@bp.route("/create", methods=("GET", "POST"))
-@login_required
-def create():
-    """Create a new post for the current user."""
-    if request.method == "POST":
-        title = request.form["title"]
-        body = request.form["body"]
-        error = None
-
-        if not title:
-            error = "Title is required."
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                "INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)",
-                (title, body, g.user["id"]),
-            )
-            db.commit()
-            return redirect(url_for("blog.index"))
-
-    return render_template("blog/create.html")
-
-
-@bp.route("/<int:id>/update", methods=("GET", "POST"))
-@login_required
-def update(id):
-    """Update a post if the current user is the author."""
-    post = get_post(id)
-
-    if request.method == "POST":
-        title = request.form["title"]
-        body = request.form["body"]
-        error = None
-
-        if not title:
-            error = "Title is required."
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                "UPDATE post SET title = ?, body = ? WHERE id = ?", (title, body, id)
-            )
-            db.commit()
-            return redirect(url_for("blog.index"))
-
-    return render_template("blog/update.html", post=post)
-
-
-@bp.route("/<int:id>/delete", methods=("POST",))
-@login_required
-def delete(id):
-    """Delete a post.
-
-    Ensures that the post exists and that the logged in user is the
-    author of the post.
-    """
-    get_post(id)
-    db = get_db()
-    db.execute("DELETE FROM post WHERE id = ?", (id,))
-    db.commit()
-    return redirect(url_for("blog.index"))
+class ArtistList(Resource):
+    
+    def get(self):
+        return artists
+    
+    # def get(self):
+    #     def get_artists(tx):
+    #         return list(tx.run('MATCH (genre:Genre) SET genre.id=id(genre) RETURN genre'))
+    #     db = get_db()
+    #     result = db.read_transaction(get_genres)
+    #     return [serialize_genre(record['genre']) for record in result]
