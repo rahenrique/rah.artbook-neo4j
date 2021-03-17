@@ -30,11 +30,6 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      # - ./conf:/conf
-      # - ./data:/data
-      # - ./import:/import
-      # - ./logs:/logs
-      # - ./plugins:/plugins
       - neo4jdata:/conf
       - neo4jdata:/data
       - neo4jdata:/import
