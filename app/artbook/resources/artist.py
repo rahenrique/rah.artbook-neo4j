@@ -15,19 +15,22 @@ class Artist(Resource):
         self.db = kwargs['db']
 
     def get(self, id):
-        def get_artist_by_id(tx, id):
-            return tx.run(
-                '''
-                MATCH (artist:Artist {id: $id}) RETURN artist 
-                ''', {'id': id}
-            ).single()
-
-        result = self.db.read_transaction(get_artist_by_id, id)
+        artist = self.db.read_transaction(self._get_artist_by_id, id)
+        
+        if artist:
+            return serialize_artist(artist)
+        
+        abort(404, message="Artist {} not found".format(id))
+    
+    @staticmethod
+    def _get_artist_by_id(tx, id):
+        query = ("MATCH (artist:Artist {id: $id}) RETURN artist")
+        result = tx.run(query, id=id).single()
         
         if result and result.get('artist'):
             return serialize_artist(result["artist"])
-        
-        abort(404, message="The requested Artist #({}) doesn't exist".format(id))
+        return None 
+
 
 
 class ArtistList(Resource):
@@ -67,3 +70,4 @@ class ArtistList(Resource):
         results = self.db.write_transaction(create_artist, name)
         artist = results['artist']
         return artist, 201
+
