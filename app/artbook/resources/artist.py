@@ -1,8 +1,7 @@
-import uuid
-from flask import Flask, abort, g, jsonify, make_response, redirect
-from flask_restful import Resource, request
+from flask import Flask
+from flask_restful import Resource, abort, request, fields, marshal_with
 
-# from artbook.domain.model import Artist
+from artbook.domain.model import Artist as ModelArtist
 from artbook.service.neo4j.repository import ArtistRepository
 
 
@@ -17,7 +16,7 @@ class Artist(Resource):
         if artist:
             return artist.serialize()
         
-        abort(404, message="artist {} not found".format(id))
+        abort(404, message="artist '{}' not found".format(id))
 
 
 class ArtistList(Resource):
@@ -37,6 +36,8 @@ class ArtistList(Resource):
         if not name:
             return {'name': 'This field is required.'}, 400
 
-        results = self.db.write_transaction(create_artist, name)
-        artist = results['artist']
-        return artist, 201
+        artist = ModelArtist(name=name)
+        repository = ArtistRepository(self.db)
+        new = repository.add(artist)
+
+        return new, 201

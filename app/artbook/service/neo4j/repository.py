@@ -1,6 +1,7 @@
 import abc
-from artbook.domain.model import Artist
+import uuid
 
+from artbook.domain.model import Artist
 
 
 class AbstractRepository(abc.ABC):
