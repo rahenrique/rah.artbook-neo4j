@@ -1,51 +1,34 @@
-from flask import Flask, g
-from flask_restful import Resource
+from flask import Flask
+from flask_restful import Resource, abort, request, fields, marshal_with
 
-
-def serialize_artist(artist):
-    return {
-        'id': artist['id'],
-        'name': artist['name']
-    }
+from artbook.domain.model import Artist as ModelArtist
+from artbook.infra.neo4j.repository import ArtistRepository
 
 
 class Artist(Resource):
-
     def __init__(self, **kwargs):
         self.db = kwargs['db']
 
     def get(self, id):
-        def get_artist_by_id(tx, id):
-            return tx.run(
-                '''
-                MATCH (artist:Artist {id: $id}) RETURN artist 
-                ''', {'id': id}
-            ).single()
+        repository = ArtistRepository(self.db)
+        artist = repository.get(id)
 
-        result = self.db.read_transaction(get_artist_by_id, id)
+        if artist:
+            return artist.serialize()
         
-        if result and result.get('artist'):
-            return serialize_artist(result["artist"])
-        
-        abort(404, message="The requested Artist #({}) doesn't exist".format(id))
+        abort(404, message="artist '{}' not found".format(id))
 
 
 class ArtistList(Resource):
-
     def __init__(self, **kwargs):
         self.db = kwargs['db']
 
     def get(self):
-        def get_artist_list(tx):
-            return list(tx.run(
-                '''
-                MATCH (artist:Artist) RETURN artist
-                '''
-            ))
-        
-        results = self.db.read_transaction(get_artist_list)
-        return [serialize_artist(record['artist']) for record in results]
-        
+        repository = ArtistRepository(self.db)
+        results = repository.all()
+
+        return [artist.serialize() for artist in results]
+
     def post(self):
         data = request.get_json()
         name = data.get('name')
@@ -53,17 +36,8 @@ class ArtistList(Resource):
         if not name:
             return {'name': 'This field is required.'}, 400
 
-        def create_artist(tx, name):
-            return tx.run(
-                '''
-                CREATE (artist:Artist {id: $id, name: $name}) RETURN artist
-                ''',
-                {
-                    'id': str(uuid.uuid4()),
-                    'name': name
-                }
-            ).single()
+        artist = ModelArtist(name=name)
+        repository = ArtistRepository(self.db)
+        new = repository.add(artist)
 
-        results = self.db.write_transaction(create_artist, name)
-        artist = results['artist']
-        return artist, 201
+        return new, 201

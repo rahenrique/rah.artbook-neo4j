@@ -3,10 +3,11 @@ import uuid
 
 from dotenv import load_dotenv, find_dotenv
 from neo4j import GraphDatabase, basic_auth
-from flask import Flask, abort, g, jsonify, make_response, redirect
-from flask_restful import Api, Resource, abort, request, fields, marshal_with
+from flask import Flask, g
+from flask_restful import Api
 
 from artbook.resources.artist import Artist, ArtistList
+
 
 def create_app(test_config=None):
 
