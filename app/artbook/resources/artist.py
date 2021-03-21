@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import Resource, abort, request, fields, marshal_with
 
-from artbook.domain.model import Artist as ModelArtist
-from artbook.infra.neo4j.repository import ArtistRepository
+from artbook.domain.models import Artist as ModelArtist
+from artbook.adapters.neo4j.repository import ArtistRepository
 
 
 class Artist(Resource):
