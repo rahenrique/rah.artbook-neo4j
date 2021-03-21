@@ -23,21 +23,21 @@ class AbstractRepository(abc.ABC):
 
 class ArtistRepository(AbstractRepository):
     def add(self, artist:Artist) -> str:
-        return self.db.read_transaction(self._add_artist, artist)
+        return self.db.read_transaction(self.__add_artist, artist)
 
     def get(self, id) -> Artist:
-        result = self.db.read_transaction(self._get_artist_by_id, id)
+        result = self.db.read_transaction(self.__get_artist_by_id, id)
         if result:
             return Artist.hydrate(result)
         return None
 
     def all(self):
-        results = self.db.read_transaction(self._get_all_artists)
+        results = self.db.read_transaction(self.__get_all_artists)
         return [Artist.hydrate(record) for record in results]
 
 
     @staticmethod
-    def _add_artist(tx, artist):
+    def __add_artist(tx, artist):
         query = (
             '''
             CREATE (artist:Artist {id: $id, name: $name}) 
@@ -55,7 +55,7 @@ class ArtistRepository(AbstractRepository):
         return None 
 
     @staticmethod
-    def _get_artist_by_id(tx, id):
+    def __get_artist_by_id(tx, id):
         query = (
             '''
             MATCH (artist:Artist {id: $id}) 
@@ -69,7 +69,7 @@ class ArtistRepository(AbstractRepository):
         return None 
 
     @staticmethod
-    def _get_all_artists(tx):
+    def __get_all_artists(tx):
         query = (
             '''
             MATCH (artist:Artist) 
