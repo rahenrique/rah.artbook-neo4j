@@ -3,10 +3,11 @@ from datetime import date
 
 class Artist():
     def __init__(self, **params):
-        self.id = params.get('id')
+        self.__id = params.get('id')
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
+        self.__altnames = None
 
     def __repr__(self):
         return self.name
@@ -20,7 +21,7 @@ class Artist():
     
     def serialize(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'name': self.name,
             'birth': self.birth,
             'death': self.death
@@ -28,8 +29,11 @@ class Artist():
     
     def addAltName(self, *altnames):
         for altname in altnames:
-            self.altname = altname
+            self.__altnames = altname
 
+    @property
+    def id(self):
+        return self.__id
 
 class GroupOfArtists():
     def __init__(self, name: str, foundation: date=None, end: date=None):
@@ -43,10 +47,10 @@ class GroupOfArtists():
 
 class Technique():
     def __init__(self, name: str):
-        self.name = name
+        self.__name = name
 
     def __repr__(self):
-        return self.name
+        return self.__name
 
 
 class ArtworkSeries():
