@@ -1,14 +1,17 @@
 from flask import Flask
 from flask_restful import Resource, abort, request, fields, marshal_with
 
+from artbook.adapters.neo4j.repository import ArtistRepository, ArtworkRepository
 from artbook.domain.models import Artist as ModelArtist
-from artbook.adapters.neo4j.repository import ArtistRepository
+from artbook.domain.models import Artwork as ModelArtwork
 
 
-class Artist(Resource):
+class BaseResource(Resource):
     def __init__(self, **kwargs):
         self.db = kwargs['db']
 
+
+class Artist(BaseResource):
     def get(self, id):
         repository = ArtistRepository(self.db)
         artist = repository.get(id)
@@ -19,10 +22,7 @@ class Artist(Resource):
         abort(404, message="artist '{}' not found".format(id))
 
 
-class ArtistList(Resource):
-    def __init__(self, **kwargs):
-        self.db = kwargs['db']
-
+class ArtistList(BaseResource):
     def get(self):
         repository = ArtistRepository(self.db)
         results = repository.all()
@@ -41,3 +41,59 @@ class ArtistList(Resource):
         new = repository.add(artist)
 
         return new, 201
+
+
+class Artwork(BaseResource):
+    def get(self, id):
+        repository = ArtworkRepository(self.db)
+        artwork = repository.get(id)
+
+        if artwork:
+            return artwork.serialize()
+        
+        abort(404, message="artwork '{}' not found".format(id))
+
+
+class ArtworkList(BaseResource):
+    def get(self):
+        repository = ArtworkRepository(self.db)
+        results = repository.all()
+
+        return [artwork.serialize() for artwork in results]
+
+    def post(self):
+        data = request.get_json()
+        title = data.get('title')
+        creation = data.get('creation')
+
+        if not title:
+            return {'title': 'This field is required.'}, 400
+        
+        if not creation:
+            return {'creation': 'This field is required.'}, 400
+
+        artwork = ModelArtwork(title=title, creation=creation)
+        repository = ArtworkRepository(self.db)
+        new = repository.add(artwork)
+
+        return new, 201
+
+
+class ArtworkAuthorship(BaseResource):
+    def get(self, id):
+        repository = ArtworkRepository(self.db)
+        results = repository.get_authors(id)
+
+        return [artist.serialize() for artist in results]
+
+    def post(self, id):
+        data = request.get_json()
+        author = data.get('author')
+
+        if not author:
+            return {'author': 'This field is required. '}, 400
+        
+        repository = ArtworkRepository(self.db)
+        authorship = repository.add_author(id, author)
+        
+        return authorship, 201
