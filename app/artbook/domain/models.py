@@ -11,14 +11,6 @@ class GroupOfArtists():
         return self.name
 
 
-class Technique():
-    def __init__(self, name: str):
-        self.__name = name
-
-    def __repr__(self):
-        return self.__name
-
-
 class ArtworkSeries():
     def __init__(self, name: str):
         self.name = name

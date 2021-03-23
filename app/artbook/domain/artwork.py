@@ -1,13 +1,11 @@
 from datetime import date
-from artbook.domain.models import Technique
 
 
 class Artwork():
-    def __init__(self, title: str, creation: date, technique: Technique=None, **params):
+    def __init__(self, title: str, creation: date, **params):
         self.__id = params.get('id')
         self.title = title
         self.creation = creation
-        self.technique = technique
 
     def __repr__(self):
         return "%s - %s" % (self.title, self.creation.isoformat())
@@ -24,6 +22,5 @@ class Artwork():
         return {
             'id': self.__id,
             'title': self.title,
-            'creation': self.creation,
-            'technique': self.technique
+            'creation': self.creation
         }
