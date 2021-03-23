@@ -126,7 +126,7 @@ class EventList(BaseResource):
 
         return [event.serialize() for event in results]
 
-    def post(self, event):
+    def post(self):
         data = request.get_json()
         title = data.get('title')
         start = data.get('start')
