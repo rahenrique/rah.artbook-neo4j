@@ -1,7 +1,8 @@
 import uuid
 
 from artbook.adapters.repository import AbstractRepository
-from artbook.domain.models import Artist, Artwork
+from artbook.domain.artist import Artist
+from artbook.domain.artwork import Artwork
 
 
 class ArtistRepository(AbstractRepository):
