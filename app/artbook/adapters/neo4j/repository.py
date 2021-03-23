@@ -3,6 +3,7 @@ import uuid
 from artbook.adapters.repository import AbstractRepository
 from artbook.domain.artist import Artist
 from artbook.domain.artwork import Artwork
+from artbook.domain.event import Event
 
 
 class ArtistRepository(AbstractRepository):
