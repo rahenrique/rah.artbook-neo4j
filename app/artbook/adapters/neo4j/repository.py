@@ -187,3 +187,65 @@ class ArtworkAuthorshipRepository(AbstractRepository):
         result = tx.run(query, params)
 
         return [{"artwork": record["artwork"]["id"], "artist": record["artist"]["id"]} for record in result]
+
+
+class EventRepository(AbstractRepository):
+    def add(self, event:Event) -> str:
+        return self.db.read_transaction(self.__add_event, event)
+
+    def get(self, id) -> Event:
+        result = self.db.read_transaction(self.__get_event_by_id, id)
+        if result:
+            return Event.hydrate(result)
+        return None
+    
+    def all(self):
+        results = self.db.read_transaction(self.__get_all_events)
+        return [Event.hydrate(record) for record in results]
+
+
+    @staticmethod
+    def __add_event(tx, event):
+        query = (
+            '''
+            CREATE (event:Event {id: $id, title: $title, start: $start, end: $end}) 
+            RETURN event
+            '''
+        )
+        params = {
+            'id': str(uuid.uuid4()),
+            'title': event.title,
+            'start': event.start,
+            'end': event.end
+        }
+        result = tx.run(query, params).single()
+
+        if result and result.get('event'):
+            return result['event']['id']
+        return None
+
+    @staticmethod
+    def __get_event_by_id(tx, id):
+        query = (
+            '''
+            MATCH (event:Event {id: $id}) 
+            RETURN event
+            '''
+        )
+        result = tx.run(query, id=id).single()
+
+        if result and result.get('event'):
+            return result['event']
+        return None 
+
+    @staticmethod
+    def __get_all_events(tx):
+        query = (
+            '''
+            MATCH (event:Event) 
+            RETURN event
+            '''
+        )
+        results = list(tx.run(query))
+
+        return [record['event'] for record in results]
