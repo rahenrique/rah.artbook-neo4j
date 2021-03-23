@@ -9,12 +9,12 @@ from artbook.domain.event import Event as ModelEvent
 
 class BaseResource(Resource):
     def __init__(self, **kwargs):
-        self.__db = kwargs['db']
+        self._db = kwargs['db']
 
 
 class Artist(BaseResource):
     def get(self, id):
-        repository = ArtistRepository(self.__db)
+        repository = ArtistRepository(self._db)
         artist = repository.get(id)
 
         if artist:
@@ -25,7 +25,7 @@ class Artist(BaseResource):
 
 class ArtistList(BaseResource):
     def get(self):
-        repository = ArtistRepository(self.__db)
+        repository = ArtistRepository(self._db)
         results = repository.all()
 
         return [artist.serialize() for artist in results]
@@ -38,7 +38,7 @@ class ArtistList(BaseResource):
             return {'name': 'This field is required.'}, 400
 
         artist = ModelArtist(name=name)
-        repository = ArtistRepository(self.__db)
+        repository = ArtistRepository(self._db)
         new = repository.add(artist)
 
         return new, 201
@@ -46,7 +46,7 @@ class ArtistList(BaseResource):
 
 class Artwork(BaseResource):
     def get(self, id):
-        repository = ArtworkRepository(self.__db)
+        repository = ArtworkRepository(self._db)
         artwork = repository.get(id)
 
         if artwork:
@@ -57,7 +57,7 @@ class Artwork(BaseResource):
 
 class ArtworkList(BaseResource):
     def get(self):
-        repository = ArtworkRepository(self.__db)
+        repository = ArtworkRepository(self._db)
         results = repository.all()
 
         return [artwork.serialize() for artwork in results]
@@ -74,7 +74,7 @@ class ArtworkList(BaseResource):
             return {'creation': 'This field is required.'}, 400
 
         artwork = ModelArtwork(title=title, creation=creation)
-        repository = ArtworkRepository(self.__db)
+        repository = ArtworkRepository(self._db)
         new = repository.add(artwork)
 
         return new, 201
@@ -82,7 +82,7 @@ class ArtworkList(BaseResource):
 
 class ArtworkAuthorship(BaseResource):
     def get(self, id):
-        repository = ArtworkAuthorshipRepository(self.__db)
+        repository = ArtworkAuthorshipRepository(self._db)
         results = repository.get_authors(id)
 
         return [artist.serialize() for artist in results]
@@ -94,7 +94,7 @@ class ArtworkAuthorship(BaseResource):
         if not author:
             return {'author': 'This field is required. '}, 400
         
-        repository = ArtworkAuthorshipRepository(self.__db)
+        repository = ArtworkAuthorshipRepository(self._db)
         authorship = repository.add(id, author)
         
         return authorship, 201
@@ -102,7 +102,7 @@ class ArtworkAuthorship(BaseResource):
 
 class ArtistAuthorship(BaseResource):
     def get(self, id):
-        repository = ArtworkAuthorshipRepository(self.__db)
+        repository = ArtworkAuthorshipRepository(self._db)
         results = repository.get_artworks(id)
 
         return [artwork.serialize() for artwork in results]
@@ -110,7 +110,7 @@ class ArtistAuthorship(BaseResource):
 
 class Event(BaseResource):
     def get(self, id):
-        repository = EventRepository(self.__db)
+        repository = EventRepository(self._db)
         event = repository.get(id)
 
         if event:
@@ -121,7 +121,7 @@ class Event(BaseResource):
 
 class EventList(BaseResource):
     def get(self):
-        repository = EventRepository(self.__db)
+        repository = EventRepository(self._db)
         results = repository.all()
 
         return [event.serialize() for event in results]
@@ -136,7 +136,7 @@ class EventList(BaseResource):
             return {'title': 'This field is required.'}, 400
 
         event = ModelEvent(title=title, start=start, end=end)
-        repository = EventRepository(self.__db)
+        repository = EventRepository(self._db)
         new = repository.add(event)
 
         return new, 201
