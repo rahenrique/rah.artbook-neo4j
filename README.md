@@ -1,7 +1,11 @@
 ArtBook
 =======
 
-Catálogo de artes e artistas em Python, utilizando Flask e Neo4J
+Catálogo de artes e artistas em Python, utilizando Flask e Neo4J. 
+
+Este é um projeto pessoal, focado principalmente no aprendizado de tecnologias, visando construir uma API de um catálogo de artes e artistas, sobre o Framework Flask, com persistência em um banco de dados grafo Neo4J. A estrutura da aplicação busca uma abordagem aderente aos conceitos de Domain Driven Design, com uma arquitetura hexagonal.
+
+Este é um Work In Progress, apresentado com todas as suas falhas inerentes ao processo de aprendizagem! :)  
 
 ## Iniciando
 
