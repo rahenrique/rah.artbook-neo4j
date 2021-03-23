@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, abort, request, fields, marshal_with
 
-from artbook.adapters.neo4j.repository import ArtistRepository, ArtworkRepository
+from artbook.adapters.neo4j.repository import ArtistRepository, ArtworkRepository, ArtworkAuthorshipRepository
 from artbook.domain.artist import Artist as ModelArtist
 from artbook.domain.artwork import Artwork as ModelArtwork
 
@@ -81,7 +81,7 @@ class ArtworkList(BaseResource):
 
 class ArtworkAuthorship(BaseResource):
     def get(self, id):
-        repository = ArtworkRepository(self.db)
+        repository = ArtworkAuthorshipRepository(self.db)
         results = repository.get_authors(id)
 
         return [artist.serialize() for artist in results]
@@ -93,7 +93,14 @@ class ArtworkAuthorship(BaseResource):
         if not author:
             return {'author': 'This field is required. '}, 400
         
-        repository = ArtworkRepository(self.db)
-        authorship = repository.add_author(id, author)
+        repository = ArtworkAuthorshipRepository(self.db)
+        authorship = repository.add(id, author)
         
         return authorship, 201
+
+class ArtistAuthorship(BaseResource):
+    def get(self, id):
+        repository = ArtworkAuthorshipRepository(self.db)
+        results = repository.get_artworks(id)
+
+        return [artwork.serialize() for artwork in results]

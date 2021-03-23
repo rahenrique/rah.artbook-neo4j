@@ -6,7 +6,7 @@ from neo4j import GraphDatabase, basic_auth
 from flask import Flask, g
 from flask_restful import Api
 
-from artbook.resources.artist import Artist, Artwork, ArtistList, ArtworkList, ArtworkAuthorship
+from artbook.resources.artist import Artist, Artwork, ArtistList, ArtworkList, ArtworkAuthorship, ArtistAuthorship
 
 
 
@@ -53,6 +53,7 @@ def create_app(test_config=None):
     api.add_resource(Artwork, '/api/artworks/<string:id>', resource_class_kwargs={'db': db})
     
     api.add_resource(ArtworkAuthorship, '/api/artworks/<string:id>/authors/', resource_class_kwargs={'db': db})
+    api.add_resource(ArtistAuthorship, '/api/artists/<string:id>/artworks/', resource_class_kwargs={'db': db})
 
 
     return app

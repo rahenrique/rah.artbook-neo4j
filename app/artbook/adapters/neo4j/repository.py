@@ -78,14 +78,6 @@ class ArtworkRepository(AbstractRepository):
     def all(self):
         results = self.db.read_transaction(self.__get_all_artworks)
         return [Artwork.hydrate(record) for record in results]
-    
-    def get_authors(self, artwork_id):
-        results = self.db.read_transaction(self.__get_artwork_authors, artwork_id)
-        return [Artist.hydrate(record) for record in results]
-
-    def add_author(self, artwork_id, artist_id):
-        result = self.db.read_transaction(self.__add_artwork_author, artwork_id, artist_id)
-        return result
 
 
     @staticmethod
@@ -133,8 +125,29 @@ class ArtworkRepository(AbstractRepository):
 
         return [record['artwork'] for record in results]
 
+
+class ArtworkAuthorshipRepository(AbstractRepository):
+    def get_authors(self, artwork_id):
+        results = self.db.read_transaction(self.__get_authors, artwork_id)
+        return [Artist.hydrate(record) for record in results]
+
+    def get_artworks(self, author_id):
+        results = self.db.read_transaction(self.__get_artworks, author_id)
+        return [Artwork.hydrate(record) for record in results]
+
+    def add(self, artwork_id, artist_id):
+        result = self.db.read_transaction(self.__add_authorship, artwork_id, artist_id)
+        return result
+    
+    def get(self, reference):
+        pass
+
+    def all(self):
+        pass
+
+
     @staticmethod
-    def __get_artwork_authors(tx, artwork_id):
+    def __get_authors(tx, artwork_id):
         query = (
             '''
             MATCH (author:Artist)-[:AUTHOR_OF]->(artwork:Artwork {id: $artwork_id}) 
@@ -146,7 +159,19 @@ class ArtworkRepository(AbstractRepository):
         return [record['author'] for record in results]
 
     @staticmethod
-    def __add_artwork_author(tx, artwork_id, artist_id):
+    def __get_artworks(tx, author_id):
+        query = (
+            '''
+            MATCH (author:Artist {id: $author_id})-[:AUTHOR_OF]->(artwork:Artwork) 
+            RETURN artwork
+            '''
+        )
+        results = list(tx.run(query, author_id=author_id))
+
+        return [record['artwork'] for record in results]
+
+    @staticmethod
+    def __add_authorship(tx, artwork_id, artist_id):
         query = (
             '''
             MATCH (artist:Artist {id: $artist_id}) 
@@ -162,4 +187,3 @@ class ArtworkRepository(AbstractRepository):
         result = tx.run(query, params)
 
         return [{"artwork": record["artwork"]["id"], "artist": record["artist"]["id"]} for record in result]
-        
