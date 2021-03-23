@@ -9,6 +9,7 @@ from flask_restful import Api
 from artbook.resources.artist import Artist, Artwork, ArtistList, ArtworkList, ArtworkAuthorship
 
 
+
 def create_app(test_config=None):
 
     load_dotenv(find_dotenv())
