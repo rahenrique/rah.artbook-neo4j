@@ -27,19 +27,19 @@ class Artist():
             'death': self.death,
             'alternative_names': list(self.__alternative_names)
         }
-    
+
     @property
     def id(self):
         return self.__id
-    
+
     @property
     def alternative_names(self):
         return self.__alternative_names
-    
+
     def add_alternative_names(self, *alternative_names):
         for altname in alternative_names:
             self.__alternative_names.add(altname)
-    
+
     def remove_alternative_names(self, *alternative_names):
         for altname in alternative_names:
             self.__alternative_names.discard(altname)
