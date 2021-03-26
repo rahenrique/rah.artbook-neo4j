@@ -79,6 +79,12 @@ class ArtworkList(BaseResource):
 
         return new, 201
 
+class ArtworkSimilarityList(BaseResource):
+    def get(self, id):
+        repository = ArtworkRepository(self._db)
+        results = repository.get_similar(id)
+
+        return [artwork.serialize() for artwork in results]
 
 class ArtworkAuthorship(BaseResource):
     def get(self, id):

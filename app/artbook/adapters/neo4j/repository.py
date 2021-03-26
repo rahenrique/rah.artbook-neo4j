@@ -80,6 +80,10 @@ class ArtworkRepository(AbstractRepository):
         results = self.db.read_transaction(self.__get_all_artworks)
         return [Artwork.hydrate(record) for record in results]
 
+    def get_similar(self, id):
+        results = self.db.read_transaction(self.__get_similar_artworks)
+        return [Artwork.hydrate(record) for record in results]
+
 
     @staticmethod
     def __add_artwork(tx, artwork):
@@ -123,6 +127,22 @@ class ArtworkRepository(AbstractRepository):
             '''
         )
         results = list(tx.run(query))
+
+        return [record['artwork'] for record in results]
+    
+    @staticmethod
+    def __get_similar_artworks(tx, id):
+        query = (
+            '''
+            MATCH (this:Artwork)<-[:HAS_TECHNIQUE]-(technique:Technique),
+                (that:Artwork)-[:HAS_TECHNIQUE]->(technique)
+            WHERE this.id = {artwork_id} AND this <> that
+            WITH that, COLLECT(DISTINCT technique.name) AS techniques
+            ORDER BY SIZE(techniques) DESC LIMIT 10
+            RETURN that AS artwork, techniques
+            '''
+        )
+        results = list(tx.run(query, id=id))
 
         return [record['artwork'] for record in results]
 
