@@ -43,13 +43,3 @@ class Artist():
     def remove_alternative_names(self, *alternative_names):
         for altname in alternative_names:
             self.__alternative_names.discard(altname)
-
-
-class GroupOfArtists():
-    def __init__(self, name: str, foundation: date=None, end: date=None):
-        self.name = name
-        self.foundation = foundation
-        self.end = end
-
-    def __repr__(self):
-        return self.name

@@ -1,12 +1,6 @@
 from datetime import date
 
-
-class Technique():
-    def __init__(self, name: str):
-        self.name = name
-
-    def __repr__(self):
-        return self.name
+from .technique import Technique
 
 
 class Artwork():
@@ -50,11 +44,3 @@ class Artwork():
     def remove_techniques(self, *techniques):
         for technique in techniques:
             self.__techniques.discard(technique)
-
-
-class ArtworkSeries():
-    def __init__(self, name: str):
-        self.name = name
-
-    def __repr__(self):
-        return self.name
