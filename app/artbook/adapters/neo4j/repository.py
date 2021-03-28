@@ -81,7 +81,7 @@ class ArtworkRepository(AbstractRepository):
         return [Artwork.hydrate(record) for record in results]
 
     def get_similar(self, id):
-        results = self.db.read_transaction(self.__get_similar_artworks)
+        results = self.db.read_transaction(self.__get_similar_artworks, id)
         return [Artwork.hydrate(record) for record in results]
 
 
@@ -109,7 +109,8 @@ class ArtworkRepository(AbstractRepository):
         query = (
             '''
             MATCH (artwork:Artwork {id: $id}) 
-            RETURN artwork
+            OPTIONAL MATCH (artwork)-[:USES_TECHNIQUE]->(technique:Technique) 
+            RETURN artwork{.*, techniques: COLLECT(DISTINCT technique.name)} 
             '''
         )
         result = tx.run(query, id=id).single()
@@ -123,7 +124,8 @@ class ArtworkRepository(AbstractRepository):
         query = (
             '''
             MATCH (artwork:Artwork) 
-            RETURN artwork
+            OPTIONAL MATCH (artwork)-[:USES_TECHNIQUE]->(technique:Technique) 
+            RETURN artwork{.*, techniques: COLLECT(DISTINCT technique.name)}
             '''
         )
         results = list(tx.run(query))
@@ -134,17 +136,18 @@ class ArtworkRepository(AbstractRepository):
     def __get_similar_artworks(tx, id):
         query = (
             '''
-            MATCH (this:Artwork)<-[:HAS_TECHNIQUE]-(technique:Technique),
-                (that:Artwork)-[:HAS_TECHNIQUE]->(technique)
-            WHERE this.id = {artwork_id} AND this <> that
+            MATCH (this:Artwork)-[:USES_TECHNIQUE]->(technique:Technique),
+                (that:Artwork)-[:USES_TECHNIQUE]->(technique)
+            WHERE this.id = {id} AND this <> that
             WITH that, COLLECT(DISTINCT technique.name) AS techniques
-            ORDER BY SIZE(techniques) DESC LIMIT 10
-            RETURN that AS artwork, techniques
+            ORDER BY SIZE(techniques) DESC LIMIT 25 
+            MATCH (that:Artwork)-[:USES_TECHNIQUE]->(that_technique:Technique)  
+            RETURN that{.*, techniques: COLLECT(DISTINCT that_technique.name)}
             '''
         )
         results = list(tx.run(query, id=id))
 
-        return [record['artwork'] for record in results]
+        return [record['that'] for record in results]
 
 
 class ArtworkAuthorshipRepository(AbstractRepository):
@@ -184,7 +187,8 @@ class ArtworkAuthorshipRepository(AbstractRepository):
         query = (
             '''
             MATCH (author:Artist {id: $author_id})-[:AUTHOR_OF]->(artwork:Artwork) 
-            RETURN artwork
+            OPTIONAL MATCH (artwork)-[:USES_TECHNIQUE]->(technique:Technique) 
+            RETURN artwork{.*, techniques: COLLECT(DISTINCT technique.name)}
             '''
         )
         results = list(tx.run(query, author_id=author_id))
