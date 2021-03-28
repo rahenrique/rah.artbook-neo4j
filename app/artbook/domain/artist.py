@@ -7,7 +7,7 @@ class Artist():
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
-        self.__alternative_names = {}
+        self.__alternative_names = set()
 
     def __repr__(self):
         return self.name
@@ -27,29 +27,19 @@ class Artist():
             'death': self.death,
             'alternative_names': list(self.__alternative_names)
         }
-    
+
     @property
     def id(self):
         return self.__id
-    
+
     @property
     def alternative_names(self):
         return self.__alternative_names
-    
+
     def add_alternative_names(self, *alternative_names):
         for altname in alternative_names:
             self.__alternative_names.add(altname)
-    
+
     def remove_alternative_names(self, *alternative_names):
         for altname in alternative_names:
             self.__alternative_names.discard(altname)
-
-
-class GroupOfArtists():
-    def __init__(self, name: str, foundation: date=None, end: date=None):
-        self.name = name
-        self.foundation = foundation
-        self.end = end
-
-    def __repr__(self):
-        return self.name
