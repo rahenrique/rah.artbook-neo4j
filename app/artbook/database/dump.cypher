@@ -1,11 +1,12 @@
 // Optional Cleanup:
-// MATCH (n) DETACH DELETE n;
+MATCH (n) DETACH DELETE n;
 
 // Techniques
 CREATE (oleo:Technique {name:"Óleo sobre tela"})
 CREATE (gravura:Technique {name:"Gravura"})
 CREATE (aguaforte:Technique {name:"Água-forte"})
 CREATE (aguatinta:Technique {name:"Água-tinta"})
+CREATE (pontaseca:Technique {name:"Ponta seca"})
 
 // Artists
 CREATE (picasso:Artist {id:"e0a08a2b-f415-48dd-8d30-c792949c3f5e",name:"Pablo Picasso",birth:"1881-10-25",death:"1973-04-08",alternative_names:["Pablo Ruiz Picasso"]})
@@ -27,6 +28,8 @@ CREATE (tauromaquia2:Artwork {id:"83fe624e-3ea6-4fdb-8ad7-cf75933e7deb",title:"N
 CREATE (tauromaquia3:Artwork {id:"8186b710-b47c-408b-a14e-c23fa16de27e",title:"No. 18: Temeridad de Martincho en la plaza de Zaragoza",creation:"1816-01-01"})
 CREATE (tauromaquia4:Artwork {id:"cc03d74f-8f58-4b3c-a7e9-8fc69e616a85",title:"No. 21: Desgracias acaecidas en el tendido de la plaza de Madrid, y muerte del alcalde de Torrejón",creation:"1816-01-01"})
 CREATE (tauromaquia5:Artwork {id:"66018230-a5a9-4712-8907-b6e230542d01",title:"No. 31: Banderillas de fuego",creation:"1816-01-01"})
+CREATE (sonho:Artwork {id:"68061858-a0ec-45b7-9722-3ba726adb7ff",title:"Capricho No. 43: El sueño de la razón produce monstruos",creation:"1799-01-01"})
+CREATE (sastre:Artwork {id:"6000fdca-7ccc-42d6-86d0-fe8e0ebc0bf1",title:"Capricho No. 52: ¡Lo que puede un sastre!",creation:"1799-01-01"})
 
 // Authorships
 CREATE (picasso)-[:AUTHOR_OF]->(guernica)
@@ -36,6 +39,12 @@ CREATE (tarsila)-[:AUTHOR_OF]->(abaporu)
 CREATE (monet)-[:AUTHOR_OF]->(sol)
 CREATE (vangogh)-[:AUTHOR_OF]->(noite)
 CREATE (goya)-[:AUTHOR_OF]->(tauromaquia1)
+CREATE (goya)-[:AUTHOR_OF]->(tauromaquia2)
+CREATE (goya)-[:AUTHOR_OF]->(tauromaquia3)
+CREATE (goya)-[:AUTHOR_OF]->(tauromaquia4)
+CREATE (goya)-[:AUTHOR_OF]->(tauromaquia5)
+CREATE (goya)-[:AUTHOR_OF]->(sonho)
+CREATE (goya)-[:AUTHOR_OF]->(sastre)
 
 // Artwork Techniques
 CREATE (guernica)-[:USES_TECHNIQUE]->(oleo)
@@ -45,20 +54,21 @@ CREATE (noite)-[:USES_TECHNIQUE]->(oleo)
 CREATE (retirantes)-[:USES_TECHNIQUE]->(oleo)
 CREATE (abaporu)-[:USES_TECHNIQUE]->(oleo)
 CREATE (tauromaquia1)-[:USES_TECHNIQUE]->(gravura)
+CREATE (tauromaquia1)-[:USES_TECHNIQUE]->(aguaforte)
+CREATE (tauromaquia1)-[:USES_TECHNIQUE]->(aguatinta)
 CREATE (tauromaquia2)-[:USES_TECHNIQUE]->(gravura)
+CREATE (tauromaquia2)-[:USES_TECHNIQUE]->(aguaforte)
+CREATE (tauromaquia2)-[:USES_TECHNIQUE]->(aguatinta)
 CREATE (tauromaquia3)-[:USES_TECHNIQUE]->(gravura)
+CREATE (tauromaquia3)-[:USES_TECHNIQUE]->(aguaforte)
 CREATE (tauromaquia4)-[:USES_TECHNIQUE]->(gravura)
 CREATE (tauromaquia5)-[:USES_TECHNIQUE]->(gravura)
-CREATE (tauromaquia1)-[:USES_TECHNIQUE]->(aguaforte)
-CREATE (tauromaquia2)-[:USES_TECHNIQUE]->(aguaforte)
-CREATE (tauromaquia3)-[:USES_TECHNIQUE]->(aguaforte)
-CREATE (tauromaquia4)-[:USES_TECHNIQUE]->(aguaforte)
 CREATE (tauromaquia5)-[:USES_TECHNIQUE]->(aguaforte)
-CREATE (tauromaquia1)-[:USES_TECHNIQUE]->(aguatinta)
-CREATE (tauromaquia2)-[:USES_TECHNIQUE]->(aguatinta)
-CREATE (tauromaquia3)-[:USES_TECHNIQUE]->(aguatinta)
-CREATE (tauromaquia4)-[:USES_TECHNIQUE]->(aguatinta)
 CREATE (tauromaquia5)-[:USES_TECHNIQUE]->(aguatinta)
+CREATE (sonho)-[:USES_TECHNIQUE]->(gravura)
+CREATE (sonho)-[:USES_TECHNIQUE]->(aguatinta)
+CREATE (sonho)-[:USES_TECHNIQUE]->(pontaseca)
+
 
 // Artwork Series
 CREATE (tauros:ArtworkSeries{id:"8bc1271d-7cc8-4ae1-898d-6883949d7174",name:"La Tauromaquia"})
@@ -67,6 +77,11 @@ CREATE (tauromaquia2)-[:BELONGS_TO]->(tauros)
 CREATE (tauromaquia3)-[:BELONGS_TO]->(tauros)
 CREATE (tauromaquia4)-[:BELONGS_TO]->(tauros)
 CREATE (tauromaquia5)-[:BELONGS_TO]->(tauros)
+
+CREATE (caprichos:ArtworkSeries{id:"f5a82931-3910-4f19-83e3-4feb31926236",name:"Los Caprichos"})
+CREATE (sonho)-[:BELONGS_TO]->(caprichos)
+CREATE (sastre)-[:BELONGS_TO]->(caprichos)
+
 
 // Artist Collectives
 CREATE (cinco:ArtistCollective {id:"be577880-6b7c-47c3-afcb-9661b399b187",name:"Grupo dos Cinco",foundation:"1922-01-01",end:"1929-01-01",alternative_names:["Group of Five"]})
