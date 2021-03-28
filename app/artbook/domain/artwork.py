@@ -8,18 +8,21 @@ class Artwork():
         self.__id = params.get('id')
         self.title = title
         self.creation = creation
-        self.__techniques = {}
+        self.__techniques = set()
 
     def __repr__(self):
         return "%s - %s" % (self.title, self.creation.isoformat())
     
     @staticmethod
     def hydrate(data):
-        return Artwork(
+        artwork = Artwork(
             id = data['id'],
             title = data['title'],
             creation = data['creation']
         )
+        if data['techniques']:
+            artwork.add_techniques(data['techniques'])
+        return artwork
     
     def serialize(self):
         return {
@@ -39,7 +42,8 @@ class Artwork():
 
     def add_techniques(self, *techniques):
         for technique in techniques:
-            self.__techniques.add(technique)
+            for t in technique:
+                self.__techniques.add(t)
 
     def remove_techniques(self, *techniques):
         for technique in techniques:
