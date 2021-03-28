@@ -7,7 +7,7 @@ class Artist():
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
-        self.__alternative_names = {}
+        self.__alternative_names = set()
 
     def __repr__(self):
         return self.name
