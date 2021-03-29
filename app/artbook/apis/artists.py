@@ -10,7 +10,8 @@ from artbook.domain.artwork import Artwork as ModelArtwork
 api = Namespace('artists', description='Artists related operations', path='/api/artists')
 
 
-@api.route('/<string:id>')
+@api.route('/<uuid:id>')
+@api.doc(params={'id': 'UUID for an Artist'})
 class Artist(Resource):
     def get(self, id):
         database = db.get_db()
@@ -46,7 +47,7 @@ class ArtistList(Resource):
         return new, 201
 
 
-@api.route('/<string:id>/artworks/')
+@api.route('/<uuid:id>/artworks/')
 class ArtistAuthorship(Resource):
     def get(self, id):
         database = db.get_db()

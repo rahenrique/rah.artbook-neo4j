@@ -10,7 +10,7 @@ from artbook.domain.artwork import Artwork as ModelArtwork
 api = Namespace('artworks', description='Artwork related operations', path='/api/artworks')
 
 
-@api.route('/<string:id>')
+@api.route('/<uuid:id>')
 class Artwork(Resource):
     def get(self, id):
         database = db.get_db()
@@ -50,7 +50,7 @@ class ArtworkList(Resource):
         return new, 201
 
 
-@api.route('/<string:id>/similar/')
+@api.route('/<uuid:id>/similar/')
 class ArtworkSimilarityList(Resource):
     def get(self, id):
         database = db.get_db()
@@ -60,7 +60,7 @@ class ArtworkSimilarityList(Resource):
         return [artwork.serialize() for artwork in results]
 
 
-@api.route('/<string:id>/authors/')
+@api.route('/<uuid:id>/authors/')
 class ArtworkAuthorship(Resource):
     def get(self, id):
         database = db.get_db()
