@@ -1,5 +1,5 @@
 Flask==1.1.2
-flask_restful==0.3.8
+flask-restx==0.2.0
 gunicorn==20.0.4
 neo4j==4.2.1
 python-dotenv==0.14.0
