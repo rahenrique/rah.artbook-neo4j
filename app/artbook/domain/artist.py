@@ -7,7 +7,8 @@ class Artist():
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
-        self.__alternative_names = set()
+        # self.__alternative_names = set()
+        self.__alternative_names = {"First Name", "Second Name", "Third Name"}
 
     def __repr__(self):
         return self.name
@@ -16,7 +17,9 @@ class Artist():
     def hydrate(data):
         return Artist(
             id = data['id'],
-            name = data['name']
+            name = data['name'],
+            birth = data['birth'],
+            death = data['death']
         )
     
     def serialize(self):

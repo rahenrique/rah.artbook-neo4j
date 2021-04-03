@@ -24,7 +24,7 @@ class Artwork(Resource):
 
 
 @api.route('/')
-class ArtworkList(Resource):
+class ArtworkCollection(Resource):
     def get(self):
         database = db.get_db()
         repository = ArtworkRepository(database)
@@ -51,7 +51,7 @@ class ArtworkList(Resource):
 
 
 @api.route('/<uuid:id>/similar/')
-class ArtworkSimilarityList(Resource):
+class ArtworkSimilarityCollection(Resource):
     def get(self, id):
         database = db.get_db()
         repository = ArtworkRepository(database)

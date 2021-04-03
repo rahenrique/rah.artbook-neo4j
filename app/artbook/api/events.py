@@ -23,7 +23,7 @@ class Event(Resource):
 
 
 @api.route('/')
-class EventList(Resource):
+class EventCollection(Resource):
     def get(self):
         database = db.get_db()
         repository = EventRepository(database)
