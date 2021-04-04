@@ -2,7 +2,7 @@ from flask_restx import Api
 
 from .artists import nsartists
 from .artworks import nsartworks
-# from .events import nsevents
+from .events import nsevents
 
 api = Api(
     title='ArtBook API',
@@ -13,4 +13,4 @@ api = Api(
 
 api.add_namespace(nsartists)
 api.add_namespace(nsartworks)
-# api.add_namespace(nsevents)
+api.add_namespace(nsevents)

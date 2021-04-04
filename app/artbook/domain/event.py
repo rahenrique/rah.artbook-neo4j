@@ -19,11 +19,3 @@ class Event():
             start = data['start'],
             end = data['end']
         )
-    
-    def serialize(self):
-        return {
-            'id': self.__id,
-            'title': self.title,
-            'start': self.start,
-            'end': self.end
-        }

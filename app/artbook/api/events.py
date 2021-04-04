@@ -5,40 +5,58 @@ from artbook import db
 from artbook.adapters.neo4j.repository import EventRepository
 from artbook.domain.event import Event as ModelEvent
 
+from artbook.api.parsers import event as eventParser
+from artbook.api.serializers import event as eventSerializer
 
-api = Namespace('events', description='Events related operations', path='/api/events')
+
+nsevents = Namespace('events', description='Events related operations', path='/api/events')
+nsevents.models[eventSerializer.name] = eventSerializer
 
 
-@api.route('/<uuid:id>')
+@nsevents.route('/<uuid:id>')
 class Event(Resource):
+    @nsevents.param('id', description='The unique identifier of the event.', required=True)
+    @nsevents.marshal_with(eventSerializer)
     def get(self, id):
+        """
+        Returns details about an event.
+        """
         database = db.get_db()
         repository = EventRepository(database)
         event = repository.get(id)
 
         if event:
-            return event.serialize()
+            return event
 
-        abort(404, message="event '{}' not found".format(id))
+        abort(404, message="Event '{}' not found".format(id))
 
 
-@api.route('/')
+
+@nsevents.route('/')
 class EventCollection(Resource):
+    @nsevents.marshal_with(eventSerializer, as_list=True)
     def get(self):
+        """
+        Returns list of events.
+        """
         database = db.get_db()
         repository = EventRepository(database)
         results = repository.all()
 
-        return [event.serialize() for event in results]
+        return [event for event in results]
 
+
+    @nsevents.response(201, 'Event successfully created', eventSerializer)
+    @nsevents.response(400, 'Validation error')
+    @nsevents.expect(eventParser)
     def post(self):
-        data = request.get_json()
-        title = data.get('title')
-        start = data.get('start')
-        end = data.get('end')
-
-        if not title:
-            return {'title': 'This field is required.'}, 400
+        """
+        Creates a new event.
+        """
+        args = eventParser.parse_args(request)
+        title = args.get('title')
+        start = args.get('start')
+        end = args.get('end')
 
         event = ModelEvent(title=title, start=start, end=end)
         database = db.get_db()
