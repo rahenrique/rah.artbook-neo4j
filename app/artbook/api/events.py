@@ -15,7 +15,7 @@ nsevents.models[eventSerializer.name] = eventSerializer
 
 @nsevents.route('/<uuid:id>')
 class Event(Resource):
-    @nsevents.param('id', description='The unique identifier of the event.', required=True)
+    @nsevents.doc(params={'id': 'The unique identifier of the event.'})
     @nsevents.marshal_with(eventSerializer)
     def get(self, id):
         """
