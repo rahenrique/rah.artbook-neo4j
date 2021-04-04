@@ -5,7 +5,7 @@ from .technique import Technique
 
 
 class Artwork():
-    def __init__(self, title: str, creation: date, **params):
+    def __init__(self, **params):
         self.__uuid = params.get('uuid')
         self.title = title
         self.creation = creation

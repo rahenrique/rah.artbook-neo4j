@@ -34,6 +34,31 @@ class Artist(Resource):
         abort(404, message="Artist '{}' not found".format(uuid))
 
 
+    @nsartists.response(400, 'Validation error')
+    @nsartists.doc(params={'uuid': 'The unique identifier of the artist.'})
+    @nsartists.expect(artistParser)
+    @nsartists.marshal_with(artistSerializer)
+    def put(self, uuid):
+        """
+        Updates details about an artist.
+        """
+        args = artistParser.parse_args(request)
+        name = args.get('name')
+        birth = args.get('birth')
+        death = args.get('death')
+        alternative_names = args.get('alternative_names')
+
+        artist = ModelArtist(name=name, birth=birth, death=death, alternative_names=alternative_names)
+        
+        database = db.get_db()
+        repository = ArtistRepository(database)
+        updated = repository.update(uuid, artist)
+
+        if updated:
+            return updated
+
+        abort(404, message="Artist '{}' not found".format(uuid))
+
 @nsartists.route('/')
 class ArtistCollection(Resource):
     @nsartists.marshal_with(artistSerializer, as_list=True)
@@ -60,8 +85,9 @@ class ArtistCollection(Resource):
         death = args.get('death')
         alternative_names = args.get('alternative_names')
 
-        database = db.get_db()
         artist = ModelArtist(name=name, birth=birth, death=death, alternative_names=alternative_names)
+        
+        database = db.get_db()
         repository = ArtistRepository(database)
         new = repository.add(artist)
 

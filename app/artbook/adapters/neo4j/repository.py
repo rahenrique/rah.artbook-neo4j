@@ -16,6 +16,18 @@ class ArtistRepository(AbstractRepository):
             return Artist.hydrate(result)
         return None
 
+    def update(self, uuid, artist:Artist) -> Artist:
+        result = self.db.read_transaction(self.__update_artist_by_id, uuid, artist)
+        if result:
+            return Artist.hydrate(result)
+        return None
+
+    def patch(self, uuid, params:dict) -> Artist:
+        pass
+
+    def delete(self, uuid) -> bool:
+        pass
+
     def all(self):
         results = self.db.read_transaction(self.__get_all_artists)
         return [Artist.hydrate(record) for record in results]
@@ -25,13 +37,15 @@ class ArtistRepository(AbstractRepository):
     def __add_artist(tx, artist):
         query = (
             '''
-            CREATE (artist:Artist {uuid: $uuid, name: $name}) 
+            CREATE (artist:Artist {uuid: $uuid, name: $name, birth: $birth, death: $death}) 
             RETURN artist
             '''
         )
         params = {
             'uuid': str(uuid.uuid4()),
-            'name': artist.name
+            'name': artist.name,
+            'birth': artist.birth,
+            'death': artist.death
         }
         result = tx.run(query, params).single()
 
@@ -48,6 +62,31 @@ class ArtistRepository(AbstractRepository):
             '''
         )
         result = tx.run(query, uuid=str(uuid)).single()
+
+        if result and result.get('artist'):
+            return result['artist']
+        return None 
+
+    @staticmethod
+    def __update_artist_by_id(tx, uuid, artist):
+        query = (
+            '''
+            MATCH (artist:Artist {uuid: $uuid}) 
+            SET 
+                artist.name = {name}, 
+                artist.birth = {birth}, 
+                artist.death = {death} 
+            RETURN artist 
+            '''
+        )
+        params = {
+            'uuid': str(uuid),
+            'name': artist.name,
+            'birth': artist.birth,
+            'death': artist.death
+        }
+
+        result = tx.run(query, params).single()
 
         if result and result.get('artist'):
             return result['artist']
@@ -75,7 +114,16 @@ class ArtworkRepository(AbstractRepository):
         if result:
             return Artwork.hydrate(result)
         return None
-    
+
+    def update(self, uuid, artwork:Artwork) -> Artwork:
+        pass
+
+    def patch(self, uuid, params:dict) -> Artwork:
+        pass
+
+    def delete(self, uuid) -> bool:
+        pass
+
     def all(self):
         results = self.db.read_transaction(self.__get_all_artworks)
         return [Artwork.hydrate(record) for record in results]
