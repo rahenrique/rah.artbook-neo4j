@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask import Flask
 
 from artbook import db
-from artbook.apis import api
+from artbook.api.api import api
 
 
 def create_app(test_config=None):
@@ -12,16 +12,11 @@ def create_app(test_config=None):
     load_dotenv(find_dotenv())
 
     app = Flask(__name__, instance_relative_config=True)
-    api.init_app(app)
-
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-    # a simple page that says hello
-    @app.route('/api/')
-    def hello():
-        return {"message":"Hello, World!"}
-
-
+    app.config['SWAGGER_UI_DOC_EXPANSION'] = 'list'
+    app.config['RESTX_MASK_SWAGGER'] = False
+    
+    api.init_app(app)
     db.init_app(app)
 
     return app

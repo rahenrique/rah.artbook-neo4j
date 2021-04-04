@@ -47,7 +47,7 @@ class ArtistRepository(AbstractRepository):
             RETURN artist
             '''
         )
-        result = tx.run(query, id=id).single()
+        result = tx.run(query, id=str(id)).single()
 
         if result and result.get('artist'):
             return result['artist']
@@ -113,7 +113,7 @@ class ArtworkRepository(AbstractRepository):
             RETURN artwork{.*, techniques: COLLECT(DISTINCT technique.name)} 
             '''
         )
-        result = tx.run(query, id=id).single()
+        result = tx.run(query, id=str(id)).single()
 
         if result and result.get('artwork'):
             return result['artwork']
@@ -145,7 +145,7 @@ class ArtworkRepository(AbstractRepository):
             RETURN that{.*, techniques: COLLECT(DISTINCT that_technique.name)}
             '''
         )
-        results = list(tx.run(query, id=id))
+        results = list(tx.run(query, id=str(id)))
 
         return [record['that'] for record in results]
 
@@ -178,7 +178,7 @@ class ArtworkAuthorshipRepository(AbstractRepository):
             RETURN author
             '''
         )
-        results = list(tx.run(query, artwork_id=artwork_id))
+        results = list(tx.run(query, artwork_id=str(artwork_id)))
 
         return [record['author'] for record in results]
 
@@ -191,7 +191,7 @@ class ArtworkAuthorshipRepository(AbstractRepository):
             RETURN artwork{.*, techniques: COLLECT(DISTINCT technique.name)}
             '''
         )
-        results = list(tx.run(query, author_id=author_id))
+        results = list(tx.run(query, author_id=str(author_id)))
 
         return [record['artwork'] for record in results]
 
@@ -206,8 +206,8 @@ class ArtworkAuthorshipRepository(AbstractRepository):
             '''
         )
         params = {
-            'artwork_id': artwork_id,
-            'artist_id': artist_id
+            'artwork_id': str(artwork_id),
+            'artist_id': str(artist_id)
         }
         result = tx.run(query, params)
 
@@ -257,7 +257,7 @@ class EventRepository(AbstractRepository):
             RETURN event
             '''
         )
-        result = tx.run(query, id=id).single()
+        result = tx.run(query, id=str(id)).single()
 
         if result and result.get('event'):
             return result['event']

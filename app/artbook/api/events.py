@@ -9,7 +9,7 @@ from artbook.domain.event import Event as ModelEvent
 api = Namespace('events', description='Events related operations', path='/api/events')
 
 
-@api.route('/<string:id>')
+@api.route('/<uuid:id>')
 class Event(Resource):
     def get(self, id):
         database = db.get_db()
@@ -23,7 +23,7 @@ class Event(Resource):
 
 
 @api.route('/')
-class EventList(Resource):
+class EventCollection(Resource):
     def get(self):
         database = db.get_db()
         repository = EventRepository(database)
