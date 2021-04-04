@@ -223,14 +223,26 @@ class EventRepository(AbstractRepository):
         if result:
             return Event.hydrate(result)
         return None
-    
-    def all(self):
-        results = self.db.read_transaction(self.__get_all_events)
-        return [Event.hydrate(record) for record in results]
+
+    def update(self, uuid, event:Event) -> Event:
+        result = self.db.read_transaction(self.__update_event_by_id, uuid, event)
+        if result:
+            return Event.hydrate(result)
+        return None
+
+    def patch(self, uuid, params:dict) -> Event:
+        result = self.db.read_transaction(self.__patch_event_by_id, uuid, params)
+        if result:
+            return Event.hydrate(result)
+        return None
 
     def delete(self, uuid) -> bool:
         result = self.db.read_transaction(self.__delete_event_by_id, uuid)
         return result
+    
+    def all(self):
+        results = self.db.read_transaction(self.__get_all_events)
+        return [Event.hydrate(record) for record in results]
 
 
     @staticmethod
@@ -268,16 +280,46 @@ class EventRepository(AbstractRepository):
         return None 
 
     @staticmethod
-    def __get_all_events(tx):
+    def __update_event_by_id(tx, uuid, event):
         query = (
             '''
-            MATCH (event:Event) 
-            RETURN event
+            MATCH (event:Event {uuid: $uuid}) 
+            SET 
+                event.title = {title}, 
+                event.start = {start}, 
+                event.end = {end} 
+            RETURN event 
             '''
         )
-        results = list(tx.run(query))
+        params = {
+            'uuid': str(uuid),
+            'title': event.title,
+            'start': event.start,
+            'end': event.end
+        }
 
-        return [record['event'] for record in results]
+        result = tx.run(query, params).single()
+
+        if result and result.get('event'):
+            return result['event']
+        return None 
+    
+    @staticmethod
+    def __patch_event_by_id(tx, uuid, params):
+        clauses = []
+        for key in params:
+            clauses.append('event.'+key+' = {'+key+'}')
+        sets = 'SET '+','.join(clauses)
+
+        query = "MATCH (event:Event {uuid: $uuid}) "+sets+" RETURN event"
+        
+        params["uuid"] = str(uuid)
+
+        result = tx.run(query, params).single()
+
+        if result and result.get('event'):
+            return result['event']
+        return None 
 
     @staticmethod
     def __delete_event_by_id(tx, uuid):
@@ -293,3 +335,15 @@ class EventRepository(AbstractRepository):
         if result and result.get('deleted'):
             return result['deleted']
         return False 
+    
+    @staticmethod
+    def __get_all_events(tx):
+        query = (
+            '''
+            MATCH (event:Event) 
+            RETURN event
+            '''
+        )
+        results = list(tx.run(query))
+
+        return [record['event'] for record in results]
