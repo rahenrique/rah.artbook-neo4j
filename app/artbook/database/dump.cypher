@@ -88,6 +88,6 @@ CREATE (cinco:ArtistCollective {id:"be577880-6b7c-47c3-afcb-9661b399b187",name:"
 CREATE (tarsila)-[:MEMBER_OF]->(cinco)
 
 // Events
-CREATE (evt1:Event{id:"2639dc5a-b5c5-4525-86b1-5486545bfee4",start:"2018-01-01",end:"2018-06-01",title:"Exposição 2018"})
-CREATE (evt2:Event{id:"21697015-8f0a-47a1-a0da-763cd2e0e9c7",start:"2020-01-05",end:"2020-07-15",title:"Exposição 2020"})
-CREATE (evt3:Event{id:"9a42a625-2c3b-48ee-a4a4-afc67f6de6fe",start:"2019-02-15",end:"2019-05-15",title:"Exposição 2019"})
+CREATE (evt1:Event {id:"2639dc5a-b5c5-4525-86b1-5486545bfee4",start:"2018-01-01",end:"2018-06-01",title:"Exposição 2018"})
+CREATE (evt2:Event {id:"21697015-8f0a-47a1-a0da-763cd2e0e9c7",start:"2020-01-05",end:"2020-07-15",title:"Exposição 2020"})
+CREATE (evt3:Event {id:"9a42a625-2c3b-48ee-a4a4-afc67f6de6fe",start:"2019-02-15",end:"2019-05-15",title:"Exposição 2019"})
