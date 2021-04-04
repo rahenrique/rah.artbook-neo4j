@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Api, Model, Namespace, Resource, abort
+from flask_restx import Namespace, Resource, abort
 
 from artbook import db
 from artbook.adapters.neo4j.repository import ArtistRepository, ArtworkAuthorshipRepository
