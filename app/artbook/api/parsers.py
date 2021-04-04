@@ -17,3 +17,9 @@ event = reqparse.RequestParser()
 event.add_argument('title', type=str, required=True, trim=True, help="Name or title of the event.")
 event.add_argument('start', type=inputs.date_from_iso8601, required=True, help='Start date of the event.')
 event.add_argument('end', type=inputs.date_from_iso8601, required=True, help='End date of the event.')
+
+
+partialEvent = reqparse.RequestParser()
+partialEvent.add_argument('title', type=str, required=False, trim=True, help="Name or title of the event.")
+partialEvent.add_argument('start', type=inputs.date_from_iso8601, required=False, help='Start date of the event.')
+partialEvent.add_argument('end', type=inputs.date_from_iso8601, required=False, help='End date of the event.')
