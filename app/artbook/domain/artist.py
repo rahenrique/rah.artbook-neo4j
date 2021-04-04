@@ -1,9 +1,10 @@
 from datetime import date
+from artbook.services.services import Neo4JDate
 
 
 class Artist():
     def __init__(self, **params):
-        self.__id = params.get('id')
+        self.__uuid = params.get('uuid')
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
@@ -15,16 +16,16 @@ class Artist():
     @staticmethod
     def hydrate(data):
         return Artist(
-            id = data['id'],
+            uuid = data['uuid'],
             name = data['name'],
-            birth = data['birth'],
-            death = data['death'],
+            birth = Neo4JDate.toDate(data['birth']),
+            death = Neo4JDate.toDate(data['death']),
             alternative_names = set() if data['alternative_names'] is None else data['alternative_names']
         )
 
     @property
-    def id(self):
-        return self.__id
+    def uuid(self):
+        return self.__uuid
 
     @property
     def alternative_names(self):

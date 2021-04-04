@@ -16,22 +16,22 @@ nsartworks.models[artistSerializer.name] = artistSerializer
 nsartworks.models[artworkSerializer.name] = artworkSerializer
 
 
-@nsartworks.route('/<uuid:id>')
+@nsartworks.route('/<uuid:uuid>')
 class Artwork(Resource):
-    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artworkSerializer)
-    def get(self, id):
+    def get(self, uuid):
         """
         Returns details about an artwork.
         """
         database = db.get_db()
         repository = ArtworkRepository(database)
-        artwork = repository.get(id)
+        artwork = repository.get(uuid)
 
         if artwork:
             return artwork
         
-        abort(404, message="Artwork '{}' not found".format(id))
+        abort(404, message="Artwork '{}' not found".format(uuid))
 
 
 
@@ -69,40 +69,40 @@ class ArtworkCollection(Resource):
 
 
 
-@nsartworks.route('/<uuid:id>/similar/')
+@nsartworks.route('/<uuid:uuid>/similar/')
 class ArtworkSimilarityCollection(Resource):
-    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artworkSerializer, as_list=True)
-    def get(self, id):
+    def get(self, uuid):
         """
         Returns list of similar artworks, based on techniques.
         """
         database = db.get_db()
         repository = ArtworkRepository(database)
-        results = repository.get_similar(id)
+        results = repository.get_similar(uuid)
 
         return [artwork for artwork in results]
 
 
 
-@nsartworks.route('/<uuid:id>/authors/')
+@nsartworks.route('/<uuid:uuid>/authors/')
 class ArtworkAuthorship(Resource):
-    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artistSerializer, as_list=True)
-    def get(self, id):
+    def get(self, uuid):
         """
         Returns a list of an artworks' artists (authorship).
         """
         database = db.get_db()
         repository = ArtworkAuthorshipRepository(database)
-        results = repository.get_authors(id)
+        results = repository.get_authors(uuid)
 
         return [artist for artist in results]
 
     
-    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
     @nsartworks.param('author', description='The unique identifier of the artist.', required=True)
-    def post(self, id):
+    def post(self, uuid):
         """
         Creates an authorship relationship to an artwork.
         """
@@ -114,6 +114,6 @@ class ArtworkAuthorship(Resource):
         
         database = db.get_db()
         repository = ArtworkAuthorshipRepository(database)
-        authorship = repository.add(id, author)
+        authorship = repository.add(uuid, author)
         
         return authorship, 201

@@ -13,36 +13,36 @@ nsevents = Namespace('events', description='Events related operations', path='/a
 nsevents.models[eventSerializer.name] = eventSerializer
 
 
-@nsevents.route('/<uuid:id>')
+@nsevents.route('/<uuid:uuid>')
 class Event(Resource):
-    # @nsevents.doc(params={'id': 'The unique identifier of the event.'})
-    # @nsevents.marshal_with(eventSerializer)
-    def get(self, id):
+    @nsevents.doc(params={'uuid': 'The unique identifier of the event.'})
+    @nsevents.marshal_with(eventSerializer)
+    def get(self, uuid):
         """
         Returns details about an event.
         """
         database = db.get_db()
         repository = EventRepository(database)
-        event = repository.get(id)
+        event = repository.get(uuid)
 
         if event:
             return event
 
-        abort(404, message="Event '{}' not found".format(id))
+        abort(404, message="Event '{}' not found".format(uuid))
 
 
-    # @nsevents.response(204, 'Event successfully deleted')
-    # @nsevents.response(400, 'Validation error')
-    # @nsevents.doc(params={'id': 'The unique identifier of the event.'})
-    # def delete(self, id):
-    #     """
-    #     Deletes an event
-    #     """
-    #     database = db.get_db()
-    #     repository = EventRepository(database)
-    #     success = repository.delete(id)
+    @nsevents.response(204, 'Event successfully deleted')
+    @nsevents.response(400, 'Validation error')
+    @nsevents.doc(params={'uuid': 'The unique identifier of the event.'})
+    def delete(self, uuid):
+        """
+        Deletes an event
+        """
+        database = db.get_db()
+        repository = EventRepository(database)
+        success = repository.delete(uuid)
 
-    #     return None, 204
+        return None, 204
 
 
 
@@ -57,13 +57,12 @@ class EventCollection(Resource):
         repository = EventRepository(database)
         results = repository.all()
 
-        # event.ser()
         return [event for event in results]
 
 
-    # @nsevents.response(201, 'Event successfully created', eventSerializer)
-    # @nsevents.response(400, 'Validation error')
-    # @nsevents.expect(eventParser)
+    @nsevents.response(201, 'Event successfully created', eventSerializer)
+    @nsevents.response(400, 'Validation error')
+    @nsevents.expect(eventParser)
     def post(self):
         """
         Creates a new event.

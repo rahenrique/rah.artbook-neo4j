@@ -1,11 +1,12 @@
 from datetime import date
 
+from artbook.services.services import Neo4JDate
 from .technique import Technique
 
 
 class Artwork():
     def __init__(self, title: str, creation: date, **params):
-        self.__id = params.get('id')
+        self.__uuid = params.get('uuid')
         self.title = title
         self.creation = creation
         self.__techniques = set()
@@ -16,17 +17,17 @@ class Artwork():
     @staticmethod
     def hydrate(data):
         artwork = Artwork(
-            id = data['id'],
+            uuid = data['uuid'],
             title = data['title'],
-            creation = data['creation']
+            creation = Neo4JDate.toDate(data['creation']),
         )
         if data['techniques']:
             artwork.add_techniques(data['techniques'])
         return artwork
 
     @property
-    def id(self):
-        return self.__id
+    def uuid(self):
+        return self.__uuid
 
     @property
     def techniques(self):

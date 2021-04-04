@@ -16,22 +16,22 @@ nsartists.models[artistSerializer.name] = artistSerializer
 nsartists.models[artworkSerializer.name] = artworkSerializer
 
 
-@nsartists.route('/<uuid:id>')
+@nsartists.route('/<uuid:uuid>')
 class Artist(Resource):
-    @nsartists.doc(params={'id': 'The unique identifier of the artist.'})
+    @nsartists.doc(params={'uuid': 'The unique identifier of the artist.'})
     @nsartists.marshal_with(artistSerializer)
-    def get(self, id):
+    def get(self, uuid):
         """
         Returns details about an artist.
         """
         database = db.get_db()
         repository = ArtistRepository(database)
-        artist = repository.get(id)
+        artist = repository.get(uuid)
 
         if artist:
             return artist
         
-        abort(404, message="Artist '{}' not found".format(id))
+        abort(404, message="Artist '{}' not found".format(uuid))
 
 
 @nsartists.route('/')
@@ -69,16 +69,16 @@ class ArtistCollection(Resource):
 
 
 
-@nsartists.route('/<uuid:id>/artworks/')
+@nsartists.route('/<uuid:uuid>/artworks/')
 class ArtistAuthorship(Resource):
-    @nsartists.doc(params={'id': 'The unique identifier of the artist.'})
+    @nsartists.doc(params={'uuid': 'The unique identifier of the artist.'})
     @nsartists.marshal_with(artworkSerializer, as_list=True)
-    def get(self, id):
+    def get(self, uuid):
         """
         Returns a list of an artist's artworks (authorship).
         """
         database = db.get_db()
         repository = ArtworkAuthorshipRepository(database)
-        results = repository.get_artworks(id)
+        results = repository.get_artworks(uuid)
 
         return [artwork for artwork in results]
