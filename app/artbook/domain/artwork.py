@@ -24,13 +24,13 @@ class Artwork():
             artwork.add_techniques(data['techniques'])
         return artwork
     
-    def serialize(self):
-        return {
-            'id': self.__id,
-            'title': self.title,
-            'creation': self.creation,
-            'techniques': list(self.__techniques)
-        }
+    # def serialize(self):
+    #     return {
+    #         'id': self.__id,
+    #         'title': self.title,
+    #         'creation': self.creation,
+    #         'techniques': list(self.__techniques)
+    #     }
 
     @property
     def id(self):

@@ -6,70 +6,106 @@ from artbook.adapters.neo4j.repository import ArtworkRepository, ArtworkAuthorsh
 from artbook.domain.artist import Artist as ModelArtist
 from artbook.domain.artwork import Artwork as ModelArtwork
 
+from artbook.api.parsers import artwork as artworkParser
+from artbook.api.serializers import artist as artistSerializer
+from artbook.api.serializers import artwork as artworkSerializer
 
-api = Namespace('artworks', description='Artwork related operations', path='/api/artworks')
+
+nsartworks = Namespace('artworks', description='Artwork related operations', path='/api/artworks')
+nsartworks.models[artistSerializer.name] = artistSerializer
+nsartworks.models[artworkSerializer.name] = artworkSerializer
 
 
-@api.route('/<uuid:id>')
+@nsartworks.route('/<uuid:id>')
 class Artwork(Resource):
+    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.marshal_with(artworkSerializer)
     def get(self, id):
+        """
+        Returns details about an artwork.
+        """
         database = db.get_db()
         repository = ArtworkRepository(database)
         artwork = repository.get(id)
 
         if artwork:
-            return artwork.serialize()
+            return artwork
         
-        abort(404, message="artwork '{}' not found".format(id))
+        abort(404, message="Artwork '{}' not found".format(id))
 
 
-@api.route('/')
+
+@nsartworks.route('/')
 class ArtworkCollection(Resource):
+    @nsartworks.marshal_with(artworkSerializer, as_list=True)
     def get(self):
+        """
+        Returns list of artworks.
+        """
         database = db.get_db()
         repository = ArtworkRepository(database)
         results = repository.all()
-        return [artwork.serialize() for artwork in results]
+        return [artwork for artwork in results]
 
+
+    @nsartworks.response(201, 'Artwork successfully created', artworkSerializer)
+    @nsartworks.response(400, 'Validation error')
+    @nsartworks.expect(artworkParser)
     def post(self):
-        data = request.get_json()
-        title = data.get('title')
-        creation = data.get('creation')
-
-        if not title:
-            return {'title': 'This field is required.'}, 400
-        
-        if not creation:
-            return {'creation': 'This field is required.'}, 400
+        """
+        Creates a new artwork.
+        """
+        args = artworkParser.parse_args(request)
+        title = args.get('title')
+        creation = args.get('creation')
+        techniques = args.get('techniques')
 
         database = db.get_db()
-        artwork = ModelArtwork(title=title, creation=creation)
+        artwork = ModelArtwork(title=title, creation=creation, techniques=techniques)
         repository = ArtworkRepository(database)
         new = repository.add(artwork)
 
         return new, 201
 
 
-@api.route('/<uuid:id>/similar/')
+
+@nsartworks.route('/<uuid:id>/similar/')
 class ArtworkSimilarityCollection(Resource):
+    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.marshal_with(artworkSerializer, as_list=True)
     def get(self, id):
+        """
+        Returns list of similar artworks, based on techniques.
+        """
         database = db.get_db()
         repository = ArtworkRepository(database)
         results = repository.get_similar(id)
 
-        return [artwork.serialize() for artwork in results]
+        return [artwork for artwork in results]
 
 
-@api.route('/<uuid:id>/authors/')
+
+@nsartworks.route('/<uuid:id>/authors/')
 class ArtworkAuthorship(Resource):
+    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.marshal_with(artistSerializer, as_list=True)
     def get(self, id):
+        """
+        Returns a list of an artworks' artists (authorship).
+        """
         database = db.get_db()
         repository = ArtworkAuthorshipRepository(database)
         results = repository.get_authors(id)
 
-        return [artist.serialize() for artist in results]
+        return [artist for artist in results]
 
+
+    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.param('author', description='The unique identifier of the artist.', required=True)
     def post(self, id):
+        """
+        Creates an authorship relationship to an artwork.
+        """
         data = request.get_json()
         author = data.get('author')
 

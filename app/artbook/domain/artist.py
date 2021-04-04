@@ -7,8 +7,7 @@ class Artist():
         self.name = params.get('name')
         self.birth = params.get('birth')
         self.death = params.get('death')
-        # self.__alternative_names = set()
-        self.__alternative_names = {"First Name", "Second Name", "Third Name"}
+        self.__alternative_names = params.get('alternative_names', set())
 
     def __repr__(self):
         return self.name
@@ -19,17 +18,9 @@ class Artist():
             id = data['id'],
             name = data['name'],
             birth = data['birth'],
-            death = data['death']
+            death = data['death'],
+            alternative_names = set() if data['alternative_names'] is None else data['alternative_names']
         )
-    
-    def serialize(self):
-        return {
-            'id': self.__id,
-            'name': self.name,
-            'birth': self.birth,
-            'death': self.death,
-            'alternative_names': list(self.__alternative_names)
-        }
 
     @property
     def id(self):
