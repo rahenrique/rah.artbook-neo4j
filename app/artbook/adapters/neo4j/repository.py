@@ -228,6 +228,10 @@ class EventRepository(AbstractRepository):
         results = self.db.read_transaction(self.__get_all_events)
         return [Event.hydrate(record) for record in results]
 
+    def delete(self, id) -> bool:
+        result = self.db.read_transaction(self.__delete_event_by_id, id)
+        return result
+
 
     @staticmethod
     def __add_event(tx, event):
@@ -274,3 +278,18 @@ class EventRepository(AbstractRepository):
         results = list(tx.run(query))
 
         return [record['event'] for record in results]
+
+    @staticmethod
+    def __delete_event_by_id(tx, id):
+        query = (
+            '''
+            MATCH (event:Event {id: $id}) 
+            DETACH DELETE event
+            RETURN true as deleted
+            '''
+        )
+        result = tx.run(query, id=str(id)).single()
+
+        if result and result.get('deleted'):
+            return result['deleted']
+        return False 

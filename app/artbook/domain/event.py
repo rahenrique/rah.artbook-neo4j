@@ -9,7 +9,7 @@ class Event():
         self.end = params.get('end')
 
     def __repr__(self):
-        return "%s (%s- %s)" % (self.title, self.start.isoformat(), self.end.isoformat())
+        return "%s" % (self.title)
     
     @staticmethod
     def hydrate(data):
@@ -19,3 +19,9 @@ class Event():
             start = data['start'],
             end = data['end']
         )
+    
+    def ser(self):
+        return {
+            'id': self.__id,
+            'title': self.title
+        }

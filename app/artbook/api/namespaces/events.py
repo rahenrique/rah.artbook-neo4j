@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, abort
 
 from artbook import db
 from artbook.adapters.neo4j.repository import EventRepository
@@ -15,8 +15,8 @@ nsevents.models[eventSerializer.name] = eventSerializer
 
 @nsevents.route('/<uuid:id>')
 class Event(Resource):
-    @nsevents.doc(params={'id': 'The unique identifier of the event.'})
-    @nsevents.marshal_with(eventSerializer)
+    # @nsevents.doc(params={'id': 'The unique identifier of the event.'})
+    # @nsevents.marshal_with(eventSerializer)
     def get(self, id):
         """
         Returns details about an event.
@@ -31,6 +31,20 @@ class Event(Resource):
         abort(404, message="Event '{}' not found".format(id))
 
 
+    # @nsevents.response(204, 'Event successfully deleted')
+    # @nsevents.response(400, 'Validation error')
+    # @nsevents.doc(params={'id': 'The unique identifier of the event.'})
+    # def delete(self, id):
+    #     """
+    #     Deletes an event
+    #     """
+    #     database = db.get_db()
+    #     repository = EventRepository(database)
+    #     success = repository.delete(id)
+
+    #     return None, 204
+
+
 
 @nsevents.route('/')
 class EventCollection(Resource):
@@ -43,12 +57,13 @@ class EventCollection(Resource):
         repository = EventRepository(database)
         results = repository.all()
 
+        # event.ser()
         return [event for event in results]
 
 
-    @nsevents.response(201, 'Event successfully created', eventSerializer)
-    @nsevents.response(400, 'Validation error')
-    @nsevents.expect(eventParser)
+    # @nsevents.response(201, 'Event successfully created', eventSerializer)
+    # @nsevents.response(400, 'Validation error')
+    # @nsevents.expect(eventParser)
     def post(self):
         """
         Creates a new event.
