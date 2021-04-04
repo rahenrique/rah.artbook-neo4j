@@ -18,7 +18,7 @@ nsartworks.models[artworkSerializer.name] = artworkSerializer
 
 @nsartworks.route('/<uuid:id>')
 class Artwork(Resource):
-    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artworkSerializer)
     def get(self, id):
         """
@@ -71,7 +71,7 @@ class ArtworkCollection(Resource):
 
 @nsartworks.route('/<uuid:id>/similar/')
 class ArtworkSimilarityCollection(Resource):
-    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artworkSerializer, as_list=True)
     def get(self, id):
         """
@@ -87,7 +87,7 @@ class ArtworkSimilarityCollection(Resource):
 
 @nsartworks.route('/<uuid:id>/authors/')
 class ArtworkAuthorship(Resource):
-    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
     @nsartworks.marshal_with(artistSerializer, as_list=True)
     def get(self, id):
         """
@@ -99,8 +99,8 @@ class ArtworkAuthorship(Resource):
 
         return [artist for artist in results]
 
-
-    @nsartworks.param('id', description='The unique identifier of the artwork.', required=True)
+    
+    @nsartworks.doc(params={'id': 'The unique identifier of the artwork.'})
     @nsartworks.param('author', description='The unique identifier of the artist.', required=True)
     def post(self, id):
         """

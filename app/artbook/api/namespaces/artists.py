@@ -18,7 +18,7 @@ nsartists.models[artworkSerializer.name] = artworkSerializer
 
 @nsartists.route('/<uuid:id>')
 class Artist(Resource):
-    @nsartists.param('id', description='The unique identifier of the artist.', required=True)
+    @nsartists.doc(params={'id': 'The unique identifier of the artist.'})
     @nsartists.marshal_with(artistSerializer)
     def get(self, id):
         """
@@ -71,7 +71,7 @@ class ArtistCollection(Resource):
 
 @nsartists.route('/<uuid:id>/artworks/')
 class ArtistAuthorship(Resource):
-    @nsartists.param('id', description='The unique identifier of the artist.', required=True)
+    @nsartists.doc(params={'id': 'The unique identifier of the artist.'})
     @nsartists.marshal_with(artworkSerializer, as_list=True)
     def get(self, id):
         """

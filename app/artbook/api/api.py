@@ -1,8 +1,9 @@
 from flask_restx import Api
 
-from .artists import nsartists
-from .artworks import nsartworks
-from .events import nsevents
+from .namespaces.artists import nsartists
+from .namespaces.artworks import nsartworks
+from .namespaces.events import nsevents
+
 
 api = Api(
     title='ArtBook API',

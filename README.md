@@ -32,6 +32,7 @@ $ docker-compose up -d
 O servidor Flask inciará na porta:5000 em modo de desenvolvimento. Qualquer alteração de código-fonte irá refletir automaticamente na aplicação em execução.
 
 Acesso:
+* API Docs (Swagger): <http://0.0.0.0:5000/>
 * App: <http://0.0.0.0:5000/api/artists/>
 * Neo4jBrowser: <http://localhost:7474/browser/>
 
@@ -55,6 +56,6 @@ Acesso:
 ## Built With
 
 * [Flask](https://flask.palletsprojects.com/)
-* [Flask-RESTful](https://flask-restful.readthedocs.io/)
+* [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
 * [Neo4j](https://neo4j.com/)
 * [nginx](https://nginx.org/en/)
