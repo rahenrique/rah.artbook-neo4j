@@ -302,7 +302,7 @@ class EventRepository(AbstractRepository):
             '''
         )
         params = {
-            'uuid': str(uuid.uuid4()),
+            'uuid': event.uuid or str(uuid.uuid4()),
             'title': event.title,
             'start': event.start,
             'end': event.end
