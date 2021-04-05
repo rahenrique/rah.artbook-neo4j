@@ -7,8 +7,8 @@ from .technique import Technique
 class Artwork():
     def __init__(self, **params):
         self.__uuid = params.get('uuid')
-        self.title = title
-        self.creation = creation
+        self.title = params.get('title')
+        self.creation = params.get('creation')
         self.__techniques = set()
 
     def __repr__(self):
