@@ -20,6 +20,7 @@ artwork.add_argument('techniques', type=str, action='append', required=False, de
 
 
 event = reqparse.RequestParser()
+event.add_argument('uuid', type=str, required=False, trim=True, help="The unique identifier of the artist.")
 event.add_argument('title', type=str, required=True, trim=True, help="Name or title of the event.")
 event.add_argument('start', type=inputs.date_from_iso8601, required=True, help='Start date of the event.')
 event.add_argument('end', type=inputs.date_from_iso8601, required=True, help='End date of the event.')

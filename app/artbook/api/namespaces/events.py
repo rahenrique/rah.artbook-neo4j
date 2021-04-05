@@ -121,11 +121,12 @@ class EventCollection(Resource):
         Creates a new event.
         """
         args = eventParser.parse_args(request)
+        uuid = args.get('uuid')
         title = args.get('title')
         start = args.get('start')
         end = args.get('end')
 
-        event = ModelEvent(title=title, start=start, end=end)
+        event = ModelEvent(uuid=uuid, title=title, start=start, end=end)
         database = db.get_db()
         repository = EventRepository(database)
         new = repository.add(event)
