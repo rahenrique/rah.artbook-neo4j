@@ -47,7 +47,11 @@ Acesso:
 
 ## Executando testes
 
-// TO-DO
+Para executar os testes, a partir do seu terminal (em sua máquina local), rode o seguinte comando:
+
+```
+$ docker exec -it artbook-app pytest -p no:cacheprovider
+```
 
 ## Deployment
 
@@ -57,5 +61,6 @@ Acesso:
 
 * [Flask](https://flask.palletsprojects.com/)
 * [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
+* [pytest](https://docs.pytest.org/en/stable/index.html)
 * [Neo4j](https://neo4j.com/)
 * [nginx](https://nginx.org/en/)
