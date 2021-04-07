@@ -14,6 +14,7 @@ partialArtist.add_argument('alternative_name', type=str, action='append', requir
 
 
 artwork = reqparse.RequestParser()
+artwork.add_argument('uuid', type=str, required=False, trim=True, help="The unique identifier of the artwork.")
 artwork.add_argument('title', type=str, required=True, trim=True, help="Title of the artwork.")
 artwork.add_argument('creation', type=inputs.date_from_iso8601, required=False, default=None, help='The date of creation of the artwork.')
 artwork.add_argument('techniques', type=str, action='append', required=False, default=None, help="Techniques used in the artwork.")

@@ -142,7 +142,7 @@ class ArtworkRepository(AbstractRepository):
             '''
         )
         params = {
-            'uuid': str(uuid.uuid4()),
+            'uuid': artwork.uuid or str(uuid.uuid4()),
             'title': artwork.title,
             'creation': artwork.creation
         }

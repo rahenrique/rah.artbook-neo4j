@@ -56,12 +56,13 @@ class ArtworkCollection(Resource):
         Creates a new artwork.
         """
         args = artworkParser.parse_args(request)
+        uuid = args.get('uuid')
         title = args.get('title')
         creation = args.get('creation')
         techniques = args.get('techniques')
 
         database = db.get_db()
-        artwork = ModelArtwork(title=title, creation=creation, techniques=techniques)
+        artwork = ModelArtwork(uuid=uuid, title=title, creation=creation, techniques=techniques)
         repository = ArtworkRepository(database)
         new = repository.add(artwork)
 
