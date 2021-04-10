@@ -5,7 +5,7 @@ Catálogo de artes e artistas em Python, utilizando Flask e Neo4J.
 
 Este é um projeto pessoal, focado principalmente no aprendizado de tecnologias, visando construir uma API de um catálogo de artes e artistas, sobre o Framework Flask, com persistência em um banco de dados grafo Neo4J. A estrutura da aplicação busca uma abordagem que seja aderente aos conceitos de Domain Driven Design, com uma arquitetura hexagonal.
 
-**Work In Progress, apresentado com todas as suas falhas inerentes ao processo de aprendizagem!** :blush:
+**Work In Progress - representa um processo de aprendizagem!**
 
 ## Iniciando
 
@@ -26,6 +26,9 @@ $ git clone https://github.com/rahenrique/artbook-neo4j.git
 $ cp app/.env.example app/.env
 
 # Execute a aplicação em modo de desenvolvimento, utilizando o servidor embarcado
+$ make init
+
+# Equivalente a rodar o comando:
 $ docker-compose up -d
 ```
 
@@ -47,10 +50,21 @@ Acesso:
 
 ## Executando testes
 
+Para fazer o seed inicial do banco de dados, rode o seguinte comando:
+```bash
+$ make db-seed
+```
+
 Para executar os testes, a partir do seu terminal (em sua máquina local), rode o seguinte comando:
 
+```bash
+$ make test
 ```
-$ docker exec -it artbook-app pytest -p no:cacheprovider
+
+Demais comandos úteis durante o desenvolvimento, podem ser consultados pelo comando:
+
+```bash
+$ make help
 ```
 
 ## Deployment
