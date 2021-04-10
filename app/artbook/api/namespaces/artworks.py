@@ -7,6 +7,7 @@ from artbook.domain.artist import Artist as ModelArtist
 from artbook.domain.artwork import Artwork as ModelArtwork
 
 from artbook.api.parsers import artwork as artworkParser
+from artbook.api.parsers import partialArtwork as partialArtworkParser
 from artbook.api.serializers import artist as artistSerializer
 from artbook.api.serializers import artwork as artworkSerializer
 
@@ -34,6 +35,65 @@ class Artwork(Resource):
         abort(404, message="Artwork '{}' not found".format(uuid))
 
 
+    @nsartworks.response(400, 'Validation error')
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
+    @nsartworks.expect(artworkParser)
+    @nsartworks.marshal_with(artworkSerializer)
+    def put(self, uuid):
+        """
+        Updates details about an artwork.
+        """
+        args = artworkParser.parse_args(request)
+        title = args.get('title')
+        creation = args.get('creation')
+        techniques = args.get('techniques')
+
+        artwork = ModelArtwork(uuid=uuid, title=title, creation=creation)
+        database = db.get_db()
+        repository = ArtworkRepository(database)
+        updated = repository.update(uuid, artwork)
+
+        if updated:
+            return updated
+
+        abort(404, message="Artwork '{}' not found".format(uuid))
+
+
+    @nsartworks.response(400, 'Validation error')
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
+    @nsartworks.expect(partialArtworkParser)
+    @nsartworks.marshal_with(artworkSerializer)
+    def patch(self, uuid):
+        """
+        Partially updates details about an artwork.
+        """
+        args = partialArtworkParser.parse_args(request)
+
+        params = {k: v for k, v in args.items() if v is not None}
+        
+        database = db.get_db()
+        repository = ArtworkRepository(database)
+        updated = repository.patch(uuid, params)
+
+        if updated:
+            return updated
+
+        abort(404, message="Artwork '{}' not found".format(uuid))
+
+
+    @nsartworks.response(204, 'Artwork successfully deleted')
+    @nsartworks.response(400, 'Validation error')
+    @nsartworks.doc(params={'uuid': 'The unique identifier of the artwork.'})
+    def delete(self, uuid):
+        """
+        Deletes an artwork
+        """
+        database = db.get_db()
+        repository = ArtworkRepository(database)
+        success = repository.delete(uuid)
+
+        return None, 204
+
 
 @nsartworks.route('/')
 class ArtworkCollection(Resource):
@@ -56,12 +116,13 @@ class ArtworkCollection(Resource):
         Creates a new artwork.
         """
         args = artworkParser.parse_args(request)
+        uuid = args.get('uuid')
         title = args.get('title')
         creation = args.get('creation')
         techniques = args.get('techniques')
 
         database = db.get_db()
-        artwork = ModelArtwork(title=title, creation=creation, techniques=techniques)
+        artwork = ModelArtwork(uuid=uuid, title=title, creation=creation, techniques=techniques)
         repository = ArtworkRepository(database)
         new = repository.add(artwork)
 

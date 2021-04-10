@@ -116,13 +116,20 @@ class ArtworkRepository(AbstractRepository):
         return None
 
     def update(self, uuid, artwork:Artwork) -> Artwork:
-        pass
+        result = self.db.read_transaction(self.__update_artwork_by_id, uuid, artwork)
+        if result:
+            return Artwork.hydrate(result)
+        return None
 
     def patch(self, uuid, params:dict) -> Artwork:
-        pass
+        result = self.db.read_transaction(self.__patch_artwork_by_id, uuid, params)
+        if result:
+            return Artwork.hydrate(result)
+        return None
 
     def delete(self, uuid) -> bool:
-        pass
+        result = self.db.read_transaction(self.__delete_artwork_by_id, uuid)
+        return result
 
     def all(self):
         results = self.db.read_transaction(self.__get_all_artworks)
@@ -142,7 +149,7 @@ class ArtworkRepository(AbstractRepository):
             '''
         )
         params = {
-            'uuid': str(uuid.uuid4()),
+            'uuid': artwork.uuid or str(uuid.uuid4()),
             'title': artwork.title,
             'creation': artwork.creation
         }
@@ -168,6 +175,62 @@ class ArtworkRepository(AbstractRepository):
         return None 
 
     @staticmethod
+    def __update_artwork_by_id(tx, uuid, artwork):
+        query = (
+            '''
+            MATCH (artwork:Artwork {uuid: $uuid}) 
+            SET 
+                artwork.title = {title}, 
+                artwork.creation = {creation}  
+            RETURN artwork 
+            '''
+        )
+        params = {
+            'uuid': str(uuid),
+            'title': artwork.title,
+            'creation': artwork.creation
+            # 'techniques': artwork.techniques
+        }
+
+        result = tx.run(query, params).single()
+
+        if result and result.get('artwork'):
+            return result['artwork']
+        return None 
+    
+    @staticmethod
+    def __patch_artwork_by_id(tx, uuid, params):
+        clauses = []
+        for key in params:
+            clauses.append('artwork.'+key+' = {'+key+'}')
+        sets = 'SET '+','.join(clauses)
+
+        query = "MATCH (artwork:Artwork {uuid: $uuid}) "+sets+" RETURN artwork"
+
+        params["uuid"] = str(uuid)
+
+        result = tx.run(query, params).single()
+
+        if result and result.get('artwork'):
+            return result['artwork']
+        return None 
+
+    @staticmethod
+    def __delete_artwork_by_id(tx, uuid):
+        query = (
+            '''
+            MATCH (artwork:Artwork {uuid: $uuid}) 
+            DETACH DELETE artwork
+            RETURN true as deleted
+            '''
+        )
+        result = tx.run(query, uuid=str(uuid)).single()
+
+        if result and result.get('deleted'):
+            return result['deleted']
+        return False 
+
+    @staticmethod
     def __get_all_artworks(tx):
         query = (
             '''
@@ -179,7 +242,7 @@ class ArtworkRepository(AbstractRepository):
         results = list(tx.run(query))
 
         return [record['artwork'] for record in results]
-    
+
     @staticmethod
     def __get_similar_artworks(tx, uuid):
         query = (
