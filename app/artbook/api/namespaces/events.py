@@ -65,15 +65,9 @@ class Event(Resource):
         Partially updates details about an event.
         """
         args = partialEventParser.parse_args(request)
-        # title = args.get('title')
-        # start = args.get('start')
-        # end = args.get('end')
 
         params = {k: v for k, v in args.items() if v is not None}
-        # params["uuid"] = uuid
-    
-        # event = ModelEvent(uuid=uuid, title=title, start=start, end=end)
-        # event = ModelEvent(**params)
+
         database = db.get_db()
         repository = EventRepository(database)
         updated = repository.patch(uuid, params)
