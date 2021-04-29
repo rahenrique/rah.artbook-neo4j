@@ -38,6 +38,12 @@ init: ## Setup dependencies to run the application for the first time
 	@echo "Makefile: Listing containers..."
 	@docker ps
 
+db-seed: ## Setup DB initial data
+	@echo "Makefile: Running db seed for initial setup..."
+	@docker exec -it artbook-db cypher-shell -v
+	@cat app/artbook/database/artbook-dump.cypher | docker exec -i artbook-db cypher-shell -u neo4j -p test --format plain
+	@echo "Makefile: Database seed migrated!"
+
 log: ## Log container's stdout
 	@echo "Makefile: Logging container's stdout..."
 	@docker logs -f artbook-app

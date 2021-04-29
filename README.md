@@ -22,14 +22,11 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 # Clone este repositório
 $ git clone https://github.com/rahenrique/artbook-neo4j.git
 
-# Copie o arquivo .env.example como .env
-$ cp app/.env.example app/.env
-
 # Execute a aplicação em modo de desenvolvimento, utilizando o servidor embarcado
 $ make init
 
-# Equivalente a rodar o comando:
-$ docker-compose up -d
+# Se necessário, edite o arquivo .env (baseado no arquivo .env.example)
+$ nano app/.env
 ```
 
 O servidor Flask inciará na porta:5000 em modo de desenvolvimento. Qualquer alteração de código-fonte irá refletir automaticamente na aplicação em execução.
