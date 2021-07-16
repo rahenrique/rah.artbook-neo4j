@@ -1,72 +1,68 @@
 ArtBook
 =======
 
-Catálogo de artes e artistas em Python, utilizando Flask e Neo4J. 
+Art catalog in Python, using Flask and Neo4J.
 
-Este é um projeto pessoal, focado principalmente no aprendizado de tecnologias, visando construir uma API de um catálogo de artes e artistas, sobre o Framework Flask, com persistência em um banco de dados grafo Neo4J. A estrutura da aplicação busca uma abordagem que seja aderente aos conceitos de Domain Driven Design, com uma arquitetura hexagonal.
+This is a personal project, mainly focused on learning technologies, aiming to build an API for a catalog of arts and artists, on the Flask Framework, with persistence in a Neo4J graph database. The application structure seeks an approach that adheres to the concepts of Domain Driven Design, with a hexagonal architecture.
 
-**Work In Progress - representa um processo de aprendizagem!**
+**Work In Progress - It documents a learning process**
 
-## Iniciando
+## Starting
 
-### Pré-requisitos
+### Prerequisites
 
-Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
+Before starting, you will need to have the following tools installed on your machine:
 * [Git](https://git-scm.com)
 * [Docker](https://www.docker.com/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Instalação (Desenvolvimento Local)
+### Installation (Local Development)
 
 ```bash
-# Clone este repositório
+# Clone this repository
 $ git clone https://github.com/rahenrique/artbook-neo4j.git
 
-# Execute a aplicação em modo de desenvolvimento, utilizando o servidor embarcado
+# Run the application in development mode using the embedded server
 $ make init
 
-# Se necessário, edite o arquivo .env (baseado no arquivo .env.example)
+# If necessary, edit the .env file (based on the .env.example file)
 $ nano app/.env
 ```
 
-O servidor Flask inciará na porta:5000 em modo de desenvolvimento. Qualquer alteração de código-fonte irá refletir automaticamente na aplicação em execução.
+The Flask server will start on port:5000 in development mode. Any source code changes will automatically reflect in the running application.
 
-Acesso:
+Acess:
 * API Docs (Swagger): <http://0.0.0.0:5000/>
 * App: <http://0.0.0.0:5000/api/artists/>
 * Neo4jBrowser: <http://localhost:7474/browser/>
 
-Opcionalmente, é possível executar a aplicação utilizando Gunicorn. Basta forçar o uso do arquivo docker-compose.yml sem overrides
+Optionally, it is possible to run the application using Gunicorn. Just force the use of docker-compose.yml file without overrides
 
 ```bash
 $ docker-compose -f docker-compose.yml up -d
 ```
-O servidor Gunicorn iniciará na porta:8080. Nesta forma, não acontecerá o reload automático da aplicação após alteraçes de código-fonte.
-Acesso:
+The Gunicorn server will start at port:8080. In this way, the application ***will not automatically reload*** after source code changes.
+Acess:
 * App: <http://localhost:8080/api/artists/>
 
-## Executando testes
+## Running tests
 
-Para fazer o seed inicial do banco de dados, rode o seguinte comando:
+To run the initial seed of the database, use the following command:
 ```bash
 $ make db-seed
 ```
 
-Para executar os testes, a partir do seu terminal (em sua máquina local), rode o seguinte comando:
+To run the tests, from your terminal (on your local machine), run the following command:
 
 ```bash
 $ make test
 ```
 
-Demais comandos úteis durante o desenvolvimento, podem ser consultados pelo comando:
+Other useful commands during development can be consulted using:
 
 ```bash
 $ make help
 ```
-
-## Deployment
-
-// TO-DO
 
 ## Built With
 
