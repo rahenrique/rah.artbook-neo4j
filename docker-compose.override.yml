@@ -19,7 +19,5 @@ services:
 
   # disabled services
   artbook-webserver:
-    image: tianon/true 
-    restart: "no"
-    command: "true"
-    entrypoint: "true"
+    deploy:
+      replicas: 0
