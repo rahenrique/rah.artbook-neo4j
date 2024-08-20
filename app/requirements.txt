@@ -3,6 +3,6 @@ flask-restx>=0.5.1
 gunicorn==22.0.0
 neo4j==4.2.1
 python-dotenv==0.14.0
-requests==2.31.0
+requests==2.32.2
 pytest==6.2.3
 coverage==5.5
